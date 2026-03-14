@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartKB 应用中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-100 text-slate-900">
+<div class="min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    <header class="bg-slate-900 text-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+            <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-lg bg-blue-500 flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="font-semibold tracking-tight">SmartKB</span>
+                <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-slate-800/60 text-slate-300">Admin</span>
+            </div>
+            <nav class="flex items-center space-x-6 text-sm">
+                <button id="navApps"
+                        class="flex items-center space-x-1 text-blue-400 font-medium border-b border-blue-400 pb-0.5">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                    <span>应用</span>
+                </button>
+                <button id="navKnowledge"
+                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
+                    <i data-lucide="database" class="w-4 h-4"></i>
+                    <span>知识库</span>
+                </button>
+                <button id="navModels"
+                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span>模型</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主体 -->
+    <main class="flex-1">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full">
+            <div class="flex gap-4 h-full">
+                <!-- 左侧 主视图区：SPA 多视图 -->
+                <div class="flex-1 flex flex-col space-y-4">
+                    <!-- 顶部面包屑 + 操作栏，随视图切换 -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center text-xs text-slate-500 space-x-1">
+                                <span>首页</span>
+                                <span>/</span>
+                                <span id="breadcrumbLabel" class="text-slate-700">应用中心</span>
+                            </div>
+                            <h1 id="mainTitle" class="mt-1 text-xl font-semibold text-slate-900">
+                                应用中心
+                            </h1>
+                            <p id="mainSubtitle" class="text-xs text-slate-500 mt-1">
+                                管理你的智能体应用，配置飞书接入和知识库。
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="openCreateKbBtn"
+                                    class="hidden inline-flex items-center space-x-2 rounded-md bg-emerald-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 transition">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>创建知识库</span>
+                            </button>
+                            <button id="openCreateModalBtn"
+                                    class="inline-flex items-center space-x-2 rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-blue-700 transition">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>创建应用</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 应用中心视图 -->
+                    <section id="appsView"
+                             class="bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <h2 class="text-sm font-semibold text-slate-900">我的应用</h2>
+                                <span id="appCountBadge"
+                                      class="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                                    0 个
+                                </span>
+                            </div>
+                        </div>
+
+                        <div id="applicationsGrid"
+                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- 动态渲染 -->
+                        </div>
+
+                        <div id="emptyState" class="mt-2 hidden border border-dashed border-slate-200 rounded-lg p-6 text-center">
+                            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-400 mb-2">
+                                <i data-lucide="bot" class="w-5 h-5"></i>
+                            </div>
+                            <p class="text-sm font-medium text-slate-700 mb-1">还没有任何应用</p>
+                            <p class="text-xs text-slate-500 mb-3">点击右上角「创建应用」按钮开始配置你的第一个智能体。</p>
+                            <button id="emptyCreateBtn"
+                                    class="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-700">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>立即创建</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 知识库视图 -->
+                    <section id="kbView"
+                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <h2 class="text-sm font-semibold text-slate-900">知识库</h2>
+                                <span id="kbCountBadge"
+                                      class="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                                    0 个
+                                </span>
+                            </div>
+                            <span class="text-[11px] text-slate-400 hidden sm:inline">
+                                选择一个知识库进行命中率测试或上传文档。
+                            </span>
+                        </div>
+                        <div id="kbList"
+                             class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 动态渲染 -->
+                        </div>
+                        <div id="kbEmptyState" class="mt-2 hidden border border-dashed border-slate-200 rounded-lg p-6 text-center">
+                            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-50 text-emerald-400 mb-2">
+                                <i data-lucide="database" class="w-5 h-5"></i>
+                            </div>
+                            <p class="text-sm font-medium text-slate-700 mb-1">还没有任何知识库</p>
+                            <p class="text-xs text-slate-500 mb-3">点击右上角「创建知识库」按钮，创建一个用于 RAG 的知识空间。</p>
+                            <button id="kbEmptyCreateBtn"
+                                    class="inline-flex items-center space-x-1 text-xs text-emerald-600 hover:text-emerald-700">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>创建知识库</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 模型视图（占位） -->
+                    <section id="modelsView"
+                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-6 flex-1 flex flex-col items-center justify-center text-center text-xs text-slate-500">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                            <i data-lucide="cpu" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <p class="text-sm font-medium text-slate-800 mb-1">模型配置即将上线</p>
+                        <p>当前版本专注于应用管理与知识库 RAG 流程。稍后你可以在这里切换 DeepSeek / OpenAI / 自建模型。</p>
+                    </section>
+                </div>
+
+                <!-- 右侧 AI 专家辅助面板 -->
+                <aside id="aiPanel"
+                       class="w-80 flex flex-col bg-slate-950/95 border border-slate-800 rounded-2xl shadow-xl text-slate-50 overflow-hidden transition-all duration-300">
+                    <div class="flex items-center justify-between px-3 py-2 border-b border-slate-800/80 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950">
+                        <div class="flex items-center space-x-2">
+                            <div class="relative">
+                                <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                </div>
+                                <span class="absolute -right-0.5 -top-0.5 inline-flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-medium tracking-wide uppercase text-slate-200">
+                                    AI 专家面板
+                                </p>
+                                <p class="text-[10px] text-slate-400">
+                                    让 AI 帮你设计应用
+                                </p>
+                            </div>
+                        </div>
+                        <button id="toggleAiPanelBtn"
+                                class="text-slate-400 hover:text-slate-100 transition text-xs flex items-center space-x-1">
+                            <i data-lucide="layout-panel-right" class="w-3.5 h-3.5"></i>
+                            <span>折叠</span>
+                        </button>
+                    </div>
+
+                    <!-- 对话流 -->
+                    <div id="aiChatContainer" class="flex-1 flex flex-col px-3 py-2 space-y-2 overflow-y-auto text-xs">
+                        <div class="flex items-start space-x-2">
+                            <div class="mt-0.5">
+                                <div class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center">
+                                    <i data-lucide="bot" class="w-3.5 h-3.5 text-slate-200"></i>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[220px]">
+                                <p class="text-[11px] text-slate-100 mb-1">
+                                    可以用自然语言告诉我你想要什么样的飞书机器人，我会帮你自动配置并填好表单。
+                                </p>
+                                <p class="text-[10px] text-slate-400">
+                                    例如：<span class="text-emerald-300">“我需要一个能回答财务报销问题的飞书机器人，对接 DeepSeek 模型”</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 输入区 -->
+                    <div class="border-t border-slate-800 bg-slate-950/90 px-3 py-2 space-y-1">
+                        <div class="flex items-center justify-between text-[10px] text-slate-500">
+                            <span>描述你的需求，AI 会帮你设计应用</span>
+                            <span class="inline-flex items-center space-x-1 text-emerald-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span>实时对话</span>
+                            </span>
+                        </div>
+                        <div class="flex items-end space-x-2">
+                            <textarea id="aiInput"
+                                      rows="2"
+                                      class="flex-1 text-xs bg-slate-900/80 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+                                      placeholder="例如：我需要一个能回答财务报销问题的飞书机器人，对接 DeepSeek 模型"></textarea>
+                            <button id="aiSendBtn"
+                                    class="inline-flex items-center justify-center rounded-lg bg-emerald-500 text-slate-950 w-9 h-8 shadow-md hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- 创建应用模态框 -->
+<div id="createModal"
+     class="fixed inset-0 z-30 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                </div>
+                <span class="text-sm font-semibold text-slate-900">创建新应用</span>
+            </div>
+            <button id="closeModalBtn"
+                    class="text-slate-400 hover:text-slate-600 transition">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <form id="createAppForm" class="px-4 py-3 space-y-3">
+            <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">
+                    应用名称 <span class="text-red-500">*</span>
+                </label>
+                <input id="nameInput" name="name" required
+                       class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                       placeholder="例如：飞书客服助手">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">
+                    应用描述
+                </label>
+                <textarea id="descriptionInput" name="description" rows="3"
+                          class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+                          placeholder="用于说明应用的使用场景，例如：自动回复常见问题、工单协作等。"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        图标（可选）
+                    </label>
+                    <input id="iconInput" name="icon"
+                           class="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                           placeholder="如：bot">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        发布状态
+                    </label>
+                    <div class="flex items-center h-[34px]">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input id="statusInput" type="checkbox" class="peer sr-only" checked>
+                            <span class="relative w-8 h-4 bg-slate-200 rounded-full transition peer-checked:bg-blue-500">
+                                <span class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-white shadow transition peer-checked:translate-x-4"></span>
+                            </span>
+                            <span class="ml-2 text-xs text-slate-600 peer-checked:text-blue-600">
+                                启用
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-dashed border-slate-200 mt-1">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        飞书 App ID（预留）
+                    </label>
+                    <input id="appIdInput" name="appId"
+                           class="w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                           placeholder="可稍后在设置中配置">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        飞书 App Secret（预留）
+                    </label>
+                    <input id="appSecretInput" name="appSecret" type="password"
+                           class="w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                           placeholder="可稍后在设置中配置">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        模型（仅配置） 
+                    </label>
+                    <input id="modelInput" name="model"
+                           class="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                           placeholder="如：DeepSeek-V3">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">
+                    系统 Prompt 模板
+                </label>
+                <textarea id="promptTemplateInput" name="promptTemplate" rows="3"
+                          class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+                          placeholder="例如：你是一名特定领域的专家，用于回答飞书中的相关问题。"></textarea>
+            </div>
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100 mt-1">
+                <button type="button" id="cancelBtn"
+                        class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-800 rounded-md hover:bg-slate-50">
+                    取消
+                </button>
+                <button type="submit"
+                        class="inline-flex items-center space-x-2 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <span>创建</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 知识库命中率测试 + 上传结果面板 -->
+<div id="kbTestModal"
+     class="fixed inset-0 z-40 hidden items-center justify-end bg-black/30 backdrop-blur-sm">
+    <div class="w-full max-w-md h-full sm:h-auto sm:rounded-l-xl bg-slate-950 text-slate-50 shadow-2xl flex flex-col">
+        <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-slate-400 uppercase tracking-wide">命中率测试</p>
+                <p id="kbTestTitle" class="text-sm font-semibold text-slate-50 mt-0.5"></p>
+            </div>
+            <button id="kbTestCloseBtn"
+                    class="text-slate-400 hover:text-slate-100 transition">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div class="px-4 py-3 space-y-3 flex-1 flex flex-col">
+            <div>
+                <label class="block text-[11px] font-medium text-slate-300 mb-1">
+                    测试问题
+                </label>
+                <textarea id="kbTestInput" rows="2"
+                          class="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+                          placeholder="例如：员工差旅报销的上限是多少？"></textarea>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-500">
+                <span>系统会返回相似度最高的若干段落。</span>
+                <span>
+                    TopN:
+                    <input id="kbTestTopN" type="number" min="1" max="20" value="5"
+                           class="w-12 bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-[11px] text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                </span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-500">
+                <span>最低相似度阈值：</span>
+                <input id="kbTestThreshold" type="number" min="0" max="1" step="0.05" value="0.5"
+                       class="w-16 bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-[11px] text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            </div>
+            <div class="flex items-center justify-end space-x-2">
+                <button id="kbTestRunBtn"
+                        class="inline-flex items-center space-x-1 rounded-md bg-emerald-500 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i data-lucide="radar" class="w-4 h-4"></i>
+                    <span>检索</span>
+                </button>
+            </div>
+            <div id="kbTestResultSummary" class="text-[11px] text-slate-400"></div>
+            <div id="kbTestResults" class="flex-1 overflow-y-auto space-y-2 text-xs">
+                <!-- 动态结果 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 顶部 Toast 容器 -->
+<div id="toastContainer" class="fixed inset-x-0 top-2 z-50 flex justify-center pointer-events-none"></div>
+
+<script>
+    const apiBase = '/api/applications';
+    const aiApiBase = '/api/ai/analyze-intent';
+    const kbApiBase = '/api/knowledge';
+
+    let state = {
+        applications: [],
+        knowledgeBases: [],
+        lastCreatedAppId: null
+    };
+
+    const navApps = document.getElementById('navApps');
+    const navKnowledge = document.getElementById('navKnowledge');
+    const navModels = document.getElementById('navModels');
+    const breadcrumbLabel = document.getElementById('breadcrumbLabel');
+    const mainTitle = document.getElementById('mainTitle');
+    const mainSubtitle = document.getElementById('mainSubtitle');
+
+    const appsView = document.getElementById('appsView');
+    const kbView = document.getElementById('kbView');
+    const modelsView = document.getElementById('modelsView');
+
+    const applicationsGrid = document.getElementById('applicationsGrid');
+    const emptyState = document.getElementById('emptyState');
+    const appCountBadge = document.getElementById('appCountBadge');
+
+    const kbList = document.getElementById('kbList');
+    const kbCountBadge = document.getElementById('kbCountBadge');
+    const kbEmptyState = document.getElementById('kbEmptyState');
+
+    const createModal = document.getElementById('createModal');
+    const openCreateModalBtn = document.getElementById('openCreateModalBtn');
+    const emptyCreateBtn = document.getElementById('emptyCreateBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const createAppForm = document.getElementById('createAppForm');
+    const openCreateKbBtn = document.getElementById('openCreateKbBtn');
+    const kbEmptyCreateBtn = document.getElementById('kbEmptyCreateBtn');
+
+    const kbTestModal = document.getElementById('kbTestModal');
+    const kbTestCloseBtn = document.getElementById('kbTestCloseBtn');
+    const kbTestTitle = document.getElementById('kbTestTitle');
+    const kbTestInput = document.getElementById('kbTestInput');
+    const kbTestTopN = document.getElementById('kbTestTopN');
+    const kbTestThreshold = document.getElementById('kbTestThreshold');
+    const kbTestRunBtn = document.getElementById('kbTestRunBtn');
+    const kbTestResults = document.getElementById('kbTestResults');
+    const kbTestResultSummary = document.getElementById('kbTestResultSummary');
+
+    const toastContainer = document.getElementById('toastContainer');
+
+    const aiPanel = document.getElementById('aiPanel');
+    const toggleAiPanelBtn = document.getElementById('toggleAiPanelBtn');
+    const aiChatContainer = document.getElementById('aiChatContainer');
+    const aiInput = document.getElementById('aiInput');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+
+    let lastAiIntentText = '';
+    let aiPanelCollapsed = false;
+    let currentKbForTest = null;
+
+    function showToast(message, type = 'error') {
+        const toast = document.createElement('div');
+        const base = 'pointer-events-auto px-3 py-2 rounded-md shadow-md text-xs flex items-center space-x-2 border backdrop-blur bg-slate-900/90';
+        const color = type === 'error'
+            ? 'border-red-500/60 text-red-50'
+            : type === 'success'
+                ? 'border-emerald-500/60 text-emerald-50'
+                : 'border-slate-600 text-slate-50';
+        toast.className = `${base} ${color}`;
+        toast.innerHTML = `
+            <span class="w-4 h-4 flex items-center justify-center">
+                <i data-lucide="${type === 'error' ? 'alert-circle' : type === 'success' ? 'check-circle-2' : 'info'}" class="w-3.5 h-3.5"></i>
+            </span>
+            <span>${message}</span>
+        `;
+        toastContainer.innerHTML = '';
+        toastContainer.appendChild(toast);
+        lucide.createIcons();
+        setTimeout(() => {
+            toast.classList.add('opacity-0', '-translate-y-1');
+        }, 2200);
+        setTimeout(() => toast.remove(), 2600);
+    }
+
+    async function apiFetch(url, options = {}) {
+        try {
+            const res = await fetch(url, options);
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                showToast(`接口异常 ${res.status}`, 'error');
+                throw new Error(`Request failed: ${res.status} ${url} ${text}`);
+            }
+            const ct = res.headers.get('content-type') || '';
+            if (ct.includes('application/json')) {
+                return res.json();
+            }
+            return res.text();
+        } catch (e) {
+            console.error('API 请求失败', url, e);
+            showToast('网络异常或 CORS 问题，请确认后端已开启 @CrossOrigin', 'error');
+            throw e;
+        }
+    }
+
+    function setActiveNav(target) {
+        [navApps, navKnowledge, navModels].forEach(btn => {
+            if (!btn) return;
+            btn.classList.remove('text-blue-400', 'border-b', 'border-blue-400');
+            btn.classList.add('text-slate-300');
+        });
+        target.classList.remove('text-slate-300');
+        target.classList.add('text-blue-400', 'border-b', 'border-blue-400');
+    }
+
+    function switchView(view) {
+        appsView.classList.add('hidden');
+        kbView.classList.add('hidden');
+        modelsView.classList.add('hidden');
+        openCreateModalBtn.classList.add('hidden');
+        openCreateKbBtn.classList.add('hidden');
+
+        if (view === 'apps') {
+            appsView.classList.remove('hidden');
+            openCreateModalBtn.classList.remove('hidden');
+            breadcrumbLabel.textContent = '应用中心';
+            mainTitle.textContent = '应用中心';
+            mainSubtitle.textContent = '管理你的智能体应用，配置飞书接入和知识库。';
+            setActiveNav(navApps);
+        } else if (view === 'kb') {
+            kbView.classList.remove('hidden');
+            openCreateKbBtn.classList.remove('hidden');
+            breadcrumbLabel.textContent = '知识库';
+            mainTitle.textContent = '知识库管理';
+            mainSubtitle.textContent = '维护面向 RAG 的知识空间，上传文档并测试命中率。';
+            setActiveNav(navKnowledge);
+        } else {
+            modelsView.classList.remove('hidden');
+            breadcrumbLabel.textContent = '模型';
+            mainTitle.textContent = '模型管理';
+            mainSubtitle.textContent = '配置底层推理模型与路由策略。';
+            setActiveNav(navModels);
+        }
+    }
+
+    navApps.addEventListener('click', () => switchView('apps'));
+    navKnowledge.addEventListener('click', () => switchView('kb'));
+    navModels.addEventListener('click', () => switchView('models'));
+
+    function openModal() {
+        createModal.classList.remove('hidden');
+        createModal.classList.add('flex');
+    }
+
+    function closeModal() {
+        createModal.classList.add('hidden');
+        createModal.classList.remove('flex');
+        createAppForm.reset();
+        document.getElementById('statusInput').checked = true;
+    }
+
+    openCreateModalBtn.addEventListener('click', openModal);
+    emptyCreateBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    createModal.addEventListener('click', (e) => {
+        if (e.target === createModal) {
+            closeModal();
+        }
+    });
+
+    async function fetchApplications() {
+        const data = await apiFetch(apiBase);
+        state.applications = Array.isArray(data) ? data : [];
+        renderApplications(state.applications);
+    }
+
+    async function fetchKnowledgeBases() {
+        const data = await apiFetch(kbApiBase);
+        state.knowledgeBases = Array.isArray(data) ? data : [];
+        renderKnowledgeBases(state.knowledgeBases);
+    }
+
+    function renderApplications(apps) {
+        applicationsGrid.innerHTML = '';
+
+        if (!apps.length) {
+            emptyState.classList.remove('hidden');
+            appCountBadge.textContent = '0 个';
+            lucide.createIcons();
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+        appCountBadge.textContent = apps.length + ' 个';
+
+        apps.forEach(app => {
+            const iconName = app.icon && app.icon.trim() ? app.icon.trim() : 'bot';
+            const enabled = app.status === true;
+            const createdBy = 'Admin';
+            const boundCount = Array.isArray(app.boundKbIds) ? app.boundKbIds.length : 0;
+            const isNew = state.lastCreatedAppId && app.id === state.lastCreatedAppId;
+
+            const card = document.createElement('article');
+            card.className =
+                'group relative flex flex-col rounded-xl bg-gradient-to-br from-slate-100/60 via-slate-50 to-slate-100/40 p-[1px] shadow-sm hover:shadow-lg hover:from-emerald-500/40 hover:via-blue-500/30 hover:to-slate-900/40 transition ' +
+                (isNew ? 'animate-[fade-in_0.3s_ease-out]' : '');
+            card.innerHTML = `
+                <div class="relative flex flex-col rounded-[11px] bg-white/95 px-3 py-3">
+                    <span class="absolute right-2 top-2 inline-flex items-center">
+                        <span class="flex h-2.5 w-2.5">
+                          <span class="${enabled ? 'bg-emerald-400' : 'bg-slate-300'} relative inline-flex h-2.5 w-2.5 rounded-full"></span>
+                        </span>
+                    </span>
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-2">
+                            <div class="relative">
+                                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition">
+                                    <i data-lucide="${iconName}" class="w-4 h-4"></i>
+                                </div>
+                                ${enabled ? `
+                                <span class="absolute -bottom-1 -right-1 inline-flex items-center justify-center">
+                                    <span class="animate-pulse inline-flex h-3 w-3 rounded-full bg-emerald-400/80"></span>
+                                </span>` : ''}
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-900 line-clamp-1" title="${app.name || ''}">
+                                    ${app.name || '未命名应用'}
+                                </h3>
+                                <p class="mt-0.5 text-[11px] text-slate-500 line-clamp-2" title="${app.description || ''}">
+                                    ${app.description || '暂无描述'}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end space-y-1">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="peer sr-only" ${enabled ? 'checked' : ''} disabled>
+                                <span class="relative w-7 h-3.5 bg-slate-200 rounded-full transition peer-checked:bg-emerald-500">
+                                    <span class="absolute left-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition peer-checked:translate-x-3.5"></span>
+                                </span>
+                            </label>
+                            <span class="text-[10px] rounded-full px-1.5 py-0.5 border border-slate-200 text-slate-500">
+                                ${enabled ? '已发布' : '未发布'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+                        <div class="flex items-center space-x-1">
+                            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                            <span>创建人：${createdBy}</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                            <span class="truncate max-w-[120px]" title="绑定知识库数量">
+                                ${boundCount} 个 KB
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex items-center justify-end space-x-2 text-[11px]">
+                        <button class="inline-flex items-center space-x-1 px-2 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50">
+                            <i data-lucide="settings-2" class="w-3 h-3"></i>
+                            <span>配置</span>
+                        </button>
+                        <button class="inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-slate-900 text-slate-50 hover:bg-slate-800">
+                            <i data-lucide="messages-square" class="w-3 h-3"></i>
+                            <span>对话</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            applicationsGrid.appendChild(card);
+        });
+
+        lucide.createIcons();
+    }
+
+    createAppForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = createAppForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
+        const payload = {
+            name: document.getElementById('nameInput').value.trim(),
+            description: document.getElementById('descriptionInput').value.trim(),
+            icon: document.getElementById('iconInput').value.trim() || null,
+            appId: document.getElementById('appIdInput').value.trim() || null,
+            appSecret: document.getElementById('appSecretInput').value.trim() || null,
+            status: document.getElementById('statusInput').checked,
+            definitionJson: (() => {
+                const model = document.getElementById('modelInput').value.trim();
+                const base = {
+                    model: model || 'DeepSeek-V3',
+                    source: 'form',
+                    createdBy: 'user-or-ai',
+                    intentText: lastAiIntentText || null
+                };
+                return JSON.stringify(base);
+            })(),
+            promptTemplate: document.getElementById('promptTemplateInput').value.trim() || null
+        };
+
+        try {
+            const created = await apiFetch(apiBase, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            state.lastCreatedAppId = created.id;
+            await fetchApplications();
+            closeModal();
+            showToast('应用创建成功', 'success');
+        } catch (err) {
+            console.error(err);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    function renderKnowledgeBases(list) {
+        kbList.innerHTML = '';
+        if (!list.length) {
+            kbEmptyState.classList.remove('hidden');
+            kbCountBadge.textContent = '0 个';
+            return;
+        }
+        kbEmptyState.classList.add('hidden');
+        kbCountBadge.textContent = list.length + ' 个';
+
+        list.forEach(kb => {
+            const card = document.createElement('article');
+            const typeLabel = kb.type === 'WEB' ? 'WEB 采集' : '文档库';
+            const permission = kb.permission === 'admin' ? '仅管理员' : '普通成员';
+            card.className =
+                'group flex flex-col rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm hover:shadow-md hover:border-emerald-300 transition';
+            card.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
+                            <i data-lucide="database" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-900 line-clamp-1" title="${kb.name || ''}">
+                                ${kb.name || '未命名知识库'}
+                            </h3>
+                            <p class="mt-0.5 text-[11px] text-slate-500 line-clamp-2" title="${kb.description || ''}">
+                                ${kb.description || '暂无描述'}
+                            </p>
+                            <div class="mt-1 flex items-center space-x-2 text-[10px] text-slate-500">
+                                <span class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">${typeLabel}</span>
+                                <span class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">权限：${permission}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button data-kb-id="${kb.id}" class="kb-upload-btn inline-flex items-center space-x-1 rounded-md border border-slate-200 px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="upload-cloud" class="w-3 h-3"></i>
+                        <span>上传</span>
+                    </button>
+                </div>
+                <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+                    <span class="flex items-center space-x-1">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>最近向量化状态请在文档列表中查看</span>
+                    </span>
+                    <div class="flex items-center space-x-2">
+                        <button data-kb-id="${kb.id}" class="kb-docs-btn inline-flex items-center space-x-1 px-2 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50">
+                            <i data-lucide="files" class="w-3 h-3"></i>
+                            <span>文档</span>
+                        </button>
+                        <button data-kb-id="${kb.id}" data-kb-name="${kb.name}" class="kb-test-btn inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-slate-900 text-white hover:bg-slate-800">
+                            <i data-lucide="radar" class="w-3 h-3"></i>
+                            <span>命中率测试</span>
+                        </button>
+                    </div>
+                </div>
+                <input type="file" data-kb-id="${kb.id}" class="kb-file-input hidden" />
+            `;
+            kbList.appendChild(card);
+        });
+
+        lucide.createIcons();
+
+        kbList.querySelectorAll('.kb-upload-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const kbId = btn.getAttribute('data-kb-id');
+                const input = kbList.querySelector(`.kb-file-input[data-kb-id="${kbId}"]`);
+                if (input) {
+                    input.value = '';
+                    input.click();
+                }
+            });
+        });
+
+        kbList.querySelectorAll('.kb-file-input').forEach(input => {
+            input.addEventListener('change', async (e) => {
+                const kbId = input.getAttribute('data-kb-id');
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const formData = new FormData();
+                formData.append('file', file);
+                showToast('文档上传中...', 'info');
+                try {
+                    await apiFetch(`${kbApiBase}/${kbId}/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    showToast('文档上传成功，向量化任务已启动', 'success');
+                } catch (err) {
+                    console.error('上传失败', err);
+                }
+            });
+        });
+
+        kbList.querySelectorAll('.kb-test-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const kbId = Number(btn.getAttribute('data-kb-id'));
+                const name = btn.getAttribute('data-kb-name') || '';
+                openKbTestModal({ id: kbId, name });
+            });
+        });
+
+        kbList.querySelectorAll('.kb-docs-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const kbId = Number(btn.getAttribute('data-kb-id'));
+                try {
+                    const docs = await apiFetch(`${kbApiBase}/${kbId}/documents`);
+                    showToast(`知识库 ${kbId} 共有 ${Array.isArray(docs) ? docs.length : 0} 个文档`, 'info');
+                } catch (e) {
+                    console.error('加载文档失败', e);
+                }
+            });
+        });
+    }
+
+    function openKbTestModal(kb) {
+        currentKbForTest = kb;
+        kbTestTitle.textContent = kb.name || `知识库 #${kb.id}`;
+        kbTestInput.value = '';
+        kbTestResults.innerHTML = '';
+        kbTestResultSummary.textContent = '';
+        kbTestModal.classList.remove('hidden');
+        kbTestModal.classList.add('flex');
+    }
+
+    function closeKbTestModal() {
+        kbTestModal.classList.add('hidden');
+        kbTestModal.classList.remove('flex');
+        currentKbForTest = null;
+    }
+
+    kbTestCloseBtn.addEventListener('click', closeKbTestModal);
+    kbTestModal.addEventListener('click', (e) => {
+        if (e.target === kbTestModal) {
+            closeKbTestModal();
+        }
+    });
+
+    kbTestRunBtn.addEventListener('click', async () => {
+        if (!currentKbForTest) return;
+        const text = kbTestInput.value.trim();
+        if (!text) {
+            showToast('请先输入一个测试问题', 'error');
+            kbTestInput.focus();
+            return;
+        }
+        const topN = Number(kbTestTopN.value || 5);
+        const threshold = Number(kbTestThreshold.value || 0.5);
+        kbTestRunBtn.disabled = true;
+        kbTestResults.innerHTML = `
+            <div class="flex items-center space-x-2 text-[11px] text-slate-300">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>向向量库发起检索中...</span>
+            </div>
+        `;
+        try {
+            const json = await apiFetch(`${kbApiBase}/${currentKbForTest.id}/hit-test`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ queryText: text, topN, threshold })
+            });
+            const results = Array.isArray(json.results) ? json.results : [];
+            kbTestResults.innerHTML = '';
+            if (!results.length) {
+                kbTestResults.innerHTML = `
+                    <div class="text-[11px] text-slate-400">
+                        未命中任何片段，可以尝试放宽阈值或补充知识库内容。
+                    </div>
+                `;
+                kbTestResultSummary.textContent = '';
+                return;
+            }
+            kbTestResultSummary.textContent = `共命中 ${results.length} 条片段（TopN=${topN}, 阈值=${threshold}）。`;
+            results.forEach((seg, index) => {
+                const score = seg.score ?? seg.score;
+                const pct = Math.round((score || 0) * 100);
+                const item = document.createElement('div');
+                item.className =
+                    'rounded-lg border border-slate-800 bg-slate-900/80 px-3 py-2 space-y-1 text-[11px] text-slate-100';
+                item.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400">片段 #${index + 1}</span>
+                        <span class="text-[10px] text-emerald-300 font-mono">score: ${score.toFixed(3)}</span>
+                    </div>
+                    <div class="mt-1 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-emerald-400 via-blue-400 to-slate-300" style="width: ${pct}%;"></div>
+                    </div>
+                    <p class="mt-1 whitespace-pre-wrap break-words text-[11px] leading-snug text-slate-100">
+                        ${seg.content || ''}
+                    </p>
+                `;
+                kbTestResults.appendChild(item);
+            });
+        } catch (e) {
+            console.error('命中率测试失败', e);
+        } finally {
+            kbTestRunBtn.disabled = false;
+        }
+    });
+
+    toggleAiPanelBtn.addEventListener('click', () => {
+        aiPanelCollapsed = !aiPanelCollapsed;
+        if (aiPanelCollapsed) {
+            aiPanel.style.width = '2.5rem';
+            aiPanel.querySelectorAll(':scope > *:not(:first-child)').forEach(el => el.classList.add('hidden'));
+            toggleAiPanelBtn.innerHTML = '<i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>';
+        } else {
+            aiPanel.style.width = '20rem';
+            aiPanel.querySelectorAll(':scope > *:not(:first-child)').forEach(el => el.classList.remove('hidden'));
+            toggleAiPanelBtn.innerHTML = '<i data-lucide="layout-panel-right" class="w-3.5 h-3.5"></i><span>折叠</span>';
+        }
+        lucide.createIcons();
+    });
+
+    function appendChatBubble(role, text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start space-x-2 ' + (role === 'user' ? 'justify-end' : '');
+
+        if (role === 'user') {
+            wrapper.innerHTML = `
+                <div class="bg-emerald-500 text-slate-950 px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[220px]">
+                    <p class="text-[11px] whitespace-pre-wrap break-words">${text}</p>
+                </div>
+            `;
+        } else {
+            wrapper.innerHTML = `
+                <div class="mt-0.5">
+                    <div class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center">
+                        <i data-lucide="bot" class="w-3.5 h-3.5 text-slate-200"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[220px]">
+                    <p class="text-[11px] whitespace-pre-wrap break-words text-slate-100">${text}</p>
+                </div>
+            `;
+        }
+
+        aiChatContainer.appendChild(wrapper);
+        aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+        lucide.createIcons();
+    }
+
+    function typewriterFill(element, text, speed = 18) {
+        return new Promise(resolve => {
+            element.value = '';
+            let i = 0;
+            const id = setInterval(() => {
+                element.value = text.slice(0, i);
+                i++;
+                if (i > text.length) {
+                    clearInterval(id);
+                    resolve();
+                }
+            }, speed);
+        });
+    }
+
+    function showEnergyOverlay() {
+        let overlay = document.getElementById('energyOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'energyOverlay';
+            overlay.className = 'fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70';
+            overlay.innerHTML = `
+                <div class="relative w-40 h-40 rounded-full bg-gradient-to-br from-emerald-500/20 via-blue-500/10 to-slate-900/60 flex items-center justify-center overflow-hidden">
+                    <div class="absolute inset-6 rounded-full border border-emerald-400/40 animate-ping"></div>
+                    <div class="absolute inset-10 rounded-full border border-blue-400/30 animate-[ping_1.8s_linear_infinite]"></div>
+                    <div class="relative z-10 flex flex-col items-center space-y-1">
+                        <div class="w-9 h-9 rounded-full bg-slate-950/80 flex items-center justify-center shadow-lg shadow-emerald-500/40">
+                            <i data-lucide="bot" class="w-5 h-5 text-emerald-300"></i>
+                        </div>
+                        <p class="text-xs text-slate-100">AI 正在汇聚配置</p>
+                        <p class="text-[10px] text-slate-400">为你的智能体填充大脑...</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            lucide.createIcons();
+        }
+        overlay.classList.remove('hidden');
+    }
+
+    function hideEnergyOverlay() {
+        const overlay = document.getElementById('energyOverlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
+    }
+
+    async function handleAiSend() {
+        const text = aiInput.value.trim();
+        if (!text) return;
+
+        appendChatBubble('user', text);
+        aiInput.value = '';
+        aiSendBtn.disabled = true;
+        lastAiIntentText = text;
+
+        const loading = document.createElement('div');
+        loading.className = 'flex items-start space-x-2 mt-1';
+        loading.innerHTML = `
+            <div class="mt-0.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center">
+                    <i data-lucide="bot" class="w-3.5 h-3.5 text-slate-200"></i>
+                </div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[220px]">
+                <div class="flex items-center space-x-1 text-[11px] text-slate-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>正在理解你的需求...</span>
+                </div>
+            </div>
+        `;
+        aiChatContainer.appendChild(loading);
+        aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+        lucide.createIcons();
+
+        showEnergyOverlay();
+
+        try {
+            const json = await apiFetch(aiApiBase, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            });
+
+            const data = json.data || {};
+            const name = data.name || '未命名智能体';
+            const model = data.model || 'DeepSeek-V3';
+
+            loading.remove();
+
+            appendChatBubble(
+                'assistant',
+                `我建议为你创建一个「${name}」，使用模型 ${model}，并为其注入合适的领域 Prompt。接下来我会为你自动填好表单，你可以再微调后点击创建。`
+            );
+
+            openModal();
+
+            const nameInput = document.getElementById('nameInput');
+            const descInput = document.getElementById('descriptionInput');
+            const iconInput = document.getElementById('iconInput');
+            const modelInput = document.getElementById('modelInput');
+            const promptInput = document.getElementById('promptTemplateInput');
+            const statusInput = document.getElementById('statusInput');
+
+            statusInput.checked = true;
+
+            await typewriterFill(nameInput, data.name || '', 22);
+            await typewriterFill(descInput, data.description || '', 8);
+            if (data.icon) {
+                iconInput.value = data.icon;
+            }
+            if (data.model) {
+                modelInput.value = data.model;
+            }
+            if (data.prompt) {
+                await typewriterFill(promptInput, data.prompt, 8);
+            }
+
+            hideEnergyOverlay();
+        } catch (err) {
+            console.error(err);
+            hideEnergyOverlay();
+            appendChatBubble('assistant', '抱歉，解析意图时出现了问题，请稍后重试或改写你的描述。');
+        } finally {
+            aiSendBtn.disabled = false;
+        }
+    }
+
+    aiSendBtn.addEventListener('click', handleAiSend);
+    aiInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleAiSend();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        lucide.createIcons();
+        switchView('apps');
+        try {
+            await Promise.all([fetchApplications(), fetchKnowledgeBases()]);
+        } catch (e) {
+            // 错误已经统一提示
+        }
+    });
+</script>
+</body>
+</html>
+

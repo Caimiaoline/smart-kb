@@ -1,0 +1,25 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 12345zxcvb
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+
+deepseek:
+  api-key: your-deepseek-api-key
+  base-url: https://api.deepseek.com
+  default-model: DeepSeek-V3
+
+# RAG 向量与 Embedding
+embedding:
+  model:
+    api-key: ${DEEPSEEK_API_KEY:your-deepseek-api-key}
+    base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+    dimensions: 1024
