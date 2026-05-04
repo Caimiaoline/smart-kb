@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local runtime data ###
+postgres-data/
+postgres_data/
+
+### Local notes ###
+面试说明书.md
+
+### Secrets / local config ###
+.env
+application-local.yml

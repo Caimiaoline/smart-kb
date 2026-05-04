@@ -93,7 +93,9 @@ public class KnowledgeController {
                 "kbId", kbId,
                 "queryText", request.queryText(),
                 "results", results,
-                "count", results.size()
+                "count", results.size(),
+                "retrievalMode", "query-rewrite + hybrid-recall(vector+keyword) + lightweight-rerank + citation",
+                "citationEnabled", true
         );
     }
 }

@@ -35,6 +35,16 @@
                     <i data-lucide="cpu" class="w-4 h-4"></i>
                     <span>模型</span>
                 </button>
+                <button id="navAgent"
+                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
+                    <i data-lucide="workflow" class="w-4 h-4"></i>
+                    <span>Agent</span>
+                </button>
+                <button id="navTools"
+                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
+                    <i data-lucide="wrench" class="w-4 h-4"></i>
+                    <span>工具</span>
+                </button>
             </nav>
         </div>
     </header>
@@ -147,6 +157,114 @@
                         </div>
                         <p class="text-sm font-medium text-slate-800 mb-1">模型配置即将上线</p>
                         <p>当前版本专注于应用管理与知识库 RAG 流程。稍后你可以在这里切换 DeepSeek / OpenAI / 自建模型。</p>
+                    </section>
+
+                    <!-- 工具调试视图 -->
+                    <section id="toolsView"
+                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col space-y-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div class="lg:col-span-1 rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-3">
+                                <div>
+                                    <h2 class="text-sm font-semibold text-slate-900 flex items-center space-x-1">
+                                        <i data-lucide="wrench" class="w-4 h-4 text-blue-600"></i>
+                                        <span>工具调试台</span>
+                                    </h2>
+                                    <p class="text-[11px] text-slate-500 mt-1">直接选择工具并传入 JSON 参数，用于验证 Tool Schema 和执行协议。</p>
+                                </div>
+                                <select id="toolSelect"
+                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="">请选择工具</option>
+                                </select>
+                                <textarea id="toolArgumentsInput" rows="10"
+                                          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                          placeholder='{"query":"如何上传知识库文档？","kbId":1,"topN":5,"threshold":0.35}'></textarea>
+                                <button id="toolExecuteBtn"
+                                        class="w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-60">
+                                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                                    <span>执行工具</span>
+                                </button>
+                            </div>
+                            <div class="lg:col-span-2 rounded-xl border border-slate-200 bg-white p-3 space-y-3">
+                                <h2 class="text-sm font-semibold text-slate-900">工具执行结果</h2>
+                                <div id="toolDetailPanel" class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">选择工具后显示参数 schema。</div>
+                                <pre id="toolResultJson" class="min-h-[300px] max-h-[520px] overflow-auto rounded-lg bg-slate-950 p-3 text-[11px] text-emerald-100 whitespace-pre-wrap">等待执行工具...</pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Agent 任务执行视图 -->
+                    <section id="agentView"
+                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col space-y-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div class="lg:col-span-1 rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-3">
+                                <div>
+                                    <h2 class="text-sm font-semibold text-slate-900 flex items-center space-x-1">
+                                        <i data-lucide="workflow" class="w-4 h-4 text-blue-600"></i>
+                                        <span>Agent 任务入口</span>
+                                    </h2>
+                                    <p class="text-[11px] text-slate-500 mt-1">输入自然语言，系统会路由到 RAG、应用草案或工具执行链路。</p>
+                                </div>
+                                <textarea id="agentInput" rows="5"
+                                          class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                          placeholder="例如：如何上传知识库文档？"></textarea>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input id="agentKbId" type="number" min="1"
+                                           class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                           placeholder="kbId 可选">
+                                    <input id="agentApplicationId" type="number" min="1"
+                                           class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                           placeholder="appId 可选">
+                                </div>
+                                <button id="agentRunBtn"
+                                        class="w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-60">
+                                    <i data-lucide="play" class="w-4 h-4"></i>
+                                    <span>执行 Agent 路由</span>
+                                </button>
+                            </div>
+                            <div class="lg:col-span-2 rounded-xl border border-slate-200 bg-white p-3 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-sm font-semibold text-slate-900">执行结果</h2>
+                                    <span id="agentRouteBadge" class="text-[11px] px-2 py-1 rounded-full bg-slate-100 text-slate-500">等待执行</span>
+                                </div>
+                                <div id="agentPlanList" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs"></div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <p class="text-[11px] text-slate-500 mb-1">选中工具</p>
+                                        <p id="agentSelectedTool" class="text-xs font-mono text-slate-800">-</p>
+                                    </div>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <p class="text-[11px] text-slate-500 mb-1">Trace</p>
+                                        <p id="agentTraceText" class="text-xs text-slate-800">-</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <p class="text-[11px] text-slate-500 mb-1">路由原因</p>
+                                        <p id="agentReasonText" class="text-xs text-slate-800 leading-5">-</p>
+                                    </div>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <p class="text-[11px] text-slate-500 mb-1">执行状态</p>
+                                        <p id="agentExecutionStatus" class="text-xs text-slate-800">-</p>
+                                    </div>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <p class="text-[11px] text-slate-500 mb-1">工具消息</p>
+                                        <p id="agentExecutionMessage" class="text-xs text-slate-800 leading-5">-</p>
+                                    </div>
+                                </div>
+                                <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                    <p class="text-[11px] text-slate-500 mb-2">Trace Events</p>
+                                    <div id="agentTraceEvents" class="space-y-2 text-xs text-slate-700"></div>
+                                </div>
+                                <pre id="agentResultJson" class="min-h-[220px] max-h-[420px] overflow-auto rounded-lg bg-slate-950 p-3 text-[11px] text-emerald-100 whitespace-pre-wrap">等待执行 Agent 任务...</pre>
+                            </div>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <h2 class="text-sm font-semibold text-slate-900">工具列表 / Tool Schema</h2>
+                                <button id="refreshToolsBtn" class="text-[11px] text-blue-600 hover:text-blue-700">刷新工具</button>
+                            </div>
+                            <div id="toolSchemaList" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs"></div>
+                        </div>
                     </section>
                 </div>
 
@@ -334,6 +452,75 @@
     </div>
 </div>
 
+<!-- 创建知识库模态框 -->
+<div id="createKbModal"
+     class="fixed inset-0 z-30 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <i data-lucide="database" class="w-4 h-4"></i>
+                </div>
+                <span class="text-sm font-semibold text-slate-900">创建知识库</span>
+            </div>
+            <button id="closeKbModalBtn"
+                    class="text-slate-400 hover:text-slate-600 transition">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <form id="createKbForm" class="px-4 py-3 space-y-3">
+            <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">
+                    知识库名称 <span class="text-red-500">*</span>
+                </label>
+                <input id="kbNameInput" name="name" required
+                       class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                       placeholder="例如：财务报销知识库">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">
+                    知识库描述
+                </label>
+                <textarea id="kbDescriptionInput" name="description" rows="3"
+                          class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none resize-none"
+                          placeholder="用于存储相关文档和知识，支持 RAG 检索。"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        类型
+                    </label>
+                    <select id="kbTypeInput" name="type"
+                            class="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                        <option value="DOC">文档库</option>
+                        <option value="WEB">WEB 采集</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">
+                        权限
+                    </label>
+                    <select id="kbPermissionInput" name="permission"
+                            class="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                        <option value="admin">仅管理员</option>
+                        <option value="user">普通成员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100 mt-1">
+                <button type="button" id="cancelKbBtn"
+                        class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-800 rounded-md hover:bg-slate-50">
+                    取消
+                </button>
+                <button type="submit"
+                        class="inline-flex items-center space-x-2 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <span>创建</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- 知识库命中率测试 + 上传结果面板 -->
 <div id="kbTestModal"
      class="fixed inset-0 z-40 hidden items-center justify-end bg-black/30 backdrop-blur-sm">
@@ -402,6 +589,8 @@
     const navApps = document.getElementById('navApps');
     const navKnowledge = document.getElementById('navKnowledge');
     const navModels = document.getElementById('navModels');
+    const navAgent = document.getElementById('navAgent');
+    const navTools = document.getElementById('navTools');
     const breadcrumbLabel = document.getElementById('breadcrumbLabel');
     const mainTitle = document.getElementById('mainTitle');
     const mainSubtitle = document.getElementById('mainSubtitle');
@@ -409,6 +598,8 @@
     const appsView = document.getElementById('appsView');
     const kbView = document.getElementById('kbView');
     const modelsView = document.getElementById('modelsView');
+    const agentView = document.getElementById('agentView');
+    const toolsView = document.getElementById('toolsView');
 
     const applicationsGrid = document.getElementById('applicationsGrid');
     const emptyState = document.getElementById('emptyState');
@@ -426,6 +617,10 @@
     const createAppForm = document.getElementById('createAppForm');
     const openCreateKbBtn = document.getElementById('openCreateKbBtn');
     const kbEmptyCreateBtn = document.getElementById('kbEmptyCreateBtn');
+    const createKbModal = document.getElementById('createKbModal');
+    const closeKbModalBtn = document.getElementById('closeKbModalBtn');
+    const cancelKbBtn = document.getElementById('cancelKbBtn');
+    const createKbForm = document.getElementById('createKbForm');
 
     const kbTestModal = document.getElementById('kbTestModal');
     const kbTestCloseBtn = document.getElementById('kbTestCloseBtn');
@@ -438,6 +633,28 @@
     const kbTestResultSummary = document.getElementById('kbTestResultSummary');
 
     const toastContainer = document.getElementById('toastContainer');
+
+    const agentInput = document.getElementById('agentInput');
+    const agentKbId = document.getElementById('agentKbId');
+    const agentApplicationId = document.getElementById('agentApplicationId');
+    const agentRunBtn = document.getElementById('agentRunBtn');
+    const agentRouteBadge = document.getElementById('agentRouteBadge');
+    const agentPlanList = document.getElementById('agentPlanList');
+    const agentSelectedTool = document.getElementById('agentSelectedTool');
+    const agentTraceText = document.getElementById('agentTraceText');
+    const agentResultJson = document.getElementById('agentResultJson');
+    const agentReasonText = document.getElementById('agentReasonText');
+    const agentExecutionStatus = document.getElementById('agentExecutionStatus');
+    const agentExecutionMessage = document.getElementById('agentExecutionMessage');
+    const agentTraceEvents = document.getElementById('agentTraceEvents');
+    const toolSchemaList = document.getElementById('toolSchemaList');
+    const refreshToolsBtn = document.getElementById('refreshToolsBtn');
+    const toolSelect = document.getElementById('toolSelect');
+    const toolArgumentsInput = document.getElementById('toolArgumentsInput');
+    const toolFillTemplateBtn = document.getElementById('toolFillTemplateBtn');
+    const toolExecuteBtn = document.getElementById('toolExecuteBtn');
+    const toolDetailPanel = document.getElementById('toolDetailPanel');
+    const toolResultJson = document.getElementById('toolResultJson');
 
     const aiPanel = document.getElementById('aiPanel');
     const toggleAiPanelBtn = document.getElementById('toggleAiPanelBtn');
@@ -494,7 +711,7 @@
     }
 
     function setActiveNav(target) {
-        [navApps, navKnowledge, navModels].forEach(btn => {
+        [navApps, navKnowledge, navModels, navAgent, navTools].forEach(btn => {
             if (!btn) return;
             btn.classList.remove('text-blue-400', 'border-b', 'border-blue-400');
             btn.classList.add('text-slate-300');
@@ -507,6 +724,8 @@
         appsView.classList.add('hidden');
         kbView.classList.add('hidden');
         modelsView.classList.add('hidden');
+        agentView.classList.add('hidden');
+        toolsView.classList.add('hidden');
         openCreateModalBtn.classList.add('hidden');
         openCreateKbBtn.classList.add('hidden');
 
@@ -524,18 +743,34 @@
             mainTitle.textContent = '知识库管理';
             mainSubtitle.textContent = '维护面向 RAG 的知识空间，上传文档并测试命中率。';
             setActiveNav(navKnowledge);
-        } else {
+        } else if (view === 'models') {
             modelsView.classList.remove('hidden');
             breadcrumbLabel.textContent = '模型';
             mainTitle.textContent = '模型管理';
             mainSubtitle.textContent = '配置底层推理模型与路由策略。';
             setActiveNav(navModels);
+        } else if (view === 'agent') {
+            agentView.classList.remove('hidden');
+            breadcrumbLabel.textContent = 'Agent';
+            mainTitle.textContent = 'Agent 执行台';
+            mainSubtitle.textContent = '展示任务路由、工具选择、执行结果和 Trace。';
+            setActiveNav(navAgent);
+            fetchTools();
+        } else {
+            toolsView.classList.remove('hidden');
+            breadcrumbLabel.textContent = '工具';
+            mainTitle.textContent = '工具调试台';
+            mainSubtitle.textContent = '查看 Tool Schema，并直接执行工具进行调试。';
+            setActiveNav(navTools);
+            fetchTools();
         }
     }
 
     navApps.addEventListener('click', () => switchView('apps'));
     navKnowledge.addEventListener('click', () => switchView('kb'));
     navModels.addEventListener('click', () => switchView('models'));
+    navAgent.addEventListener('click', () => switchView('agent'));
+    navTools.addEventListener('click', () => switchView('tools'));
 
     function openModal() {
         createModal.classList.remove('hidden');
@@ -825,6 +1060,235 @@
         });
     }
 
+    function renderAgentPlan(plan = []) {
+        agentPlanList.innerHTML = '';
+        if (!Array.isArray(plan) || !plan.length) {
+            agentPlanList.innerHTML = '<div class="text-xs text-slate-400">暂无执行计划</div>';
+            return;
+        }
+        plan.forEach((step, index) => {
+            const item = document.createElement('div');
+            item.className = 'rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 flex items-start space-x-2';
+            item.innerHTML = `
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-semibold">${index + 1}</span>
+                <span class="text-xs text-slate-700 leading-5">${step}</span>
+            `;
+            agentPlanList.appendChild(item);
+        });
+    }
+
+    function renderTraceEvents(events = []) {
+        agentTraceEvents.innerHTML = '';
+        if (!Array.isArray(events) || !events.length) {
+            agentTraceEvents.innerHTML = '<div class="text-xs text-slate-400">暂无 Trace 事件</div>';
+            return;
+        }
+        events.forEach(event => {
+            const item = document.createElement('div');
+            const ok = event.status === 'completed';
+            const failed = event.status === 'failed';
+            item.className = 'rounded-lg border border-slate-200 bg-white px-3 py-2 flex items-start justify-between gap-3';
+            item.innerHTML = `
+                <div>
+                    <p class="text-xs font-mono text-slate-900">${event.stage}</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">${event.timestamp || ''}</p>
+                </div>
+                <span class="text-[11px] px-2 py-0.5 rounded-full ${failed ? 'bg-red-100 text-red-600' : ok ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}">${event.status}</span>
+            `;
+            agentTraceEvents.appendChild(item);
+        });
+    }
+
+    let cachedTools = [];
+
+    function updateToolSelect(tools = []) {
+        if (!toolSelect) return;
+        toolSelect.innerHTML = '<option value="">请选择工具</option>';
+        tools.forEach(tool => {
+            const option = document.createElement('option');
+            option.value = tool.name;
+            option.textContent = tool.name;
+            toolSelect.appendChild(option);
+        });
+    }
+
+    function fillToolArgumentTemplate() {
+        const tool = cachedTools.find(t => t.name === toolSelect.value);
+        if (!tool || !toolArgumentsInput) return;
+        const params = Array.isArray(tool.parameters) ? tool.parameters : [];
+        const template = {};
+        params.forEach(p => {
+            if (p.defaultValue !== undefined && p.defaultValue !== null && p.defaultValue !== '') {
+                template[p.name] = p.defaultValue;
+            } else if (p.type === 'string') {
+                template[p.name] = p.required ? '' : '';
+            } else if (p.type === 'long' || p.type === 'int') {
+                template[p.name] = p.required ? 1 : null;
+            } else if (p.type === 'double') {
+                template[p.name] = p.required ? 0.0 : null;
+            } else if (p.type === 'boolean') {
+                template[p.name] = false;
+            } else {
+                template[p.name] = null;
+            }
+        });
+        toolArgumentsInput.value = JSON.stringify(template, null, 2);
+    }
+
+    function renderSelectedToolDetail(toolName) {
+        if (!toolDetailPanel) return;
+        const tool = cachedTools.find(t => t.name === toolName);
+        if (!tool) {
+            toolDetailPanel.innerHTML = '选择工具后显示参数 schema。';
+            return;
+        }
+        const params = Array.isArray(tool.parameters) ? tool.parameters : [];
+        toolDetailPanel.innerHTML = `
+            <div class="space-y-2">
+                <div>
+                    <p class="text-xs font-semibold text-slate-900 font-mono">${tool.name}</p>
+                    <p class="text-[11px] text-slate-500 mt-1">${tool.description || ''}</p>
+                </div>
+                <div class="space-y-1">
+                    ${params.length ? params.map(p => `
+                        <div class="rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px]">
+                            <span class="font-mono text-slate-800">${p.name}</span>
+                            <span class="text-slate-400">: ${p.type}</span>
+                            <span class="ml-1 ${p.required ? 'text-red-500' : 'text-slate-400'}">${p.required ? '必填' : '选填'}</span>
+                            <div class="text-slate-500 mt-0.5">${p.description || ''}</div>
+                        </div>
+                    `).join('') : '<div class="text-[11px] text-slate-400">无参数</div>'}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderToolSchemas(tools = []) {
+        cachedTools = Array.isArray(tools) ? tools : [];
+        toolSchemaList.innerHTML = '';
+        updateToolSelect(cachedTools);
+        if (!cachedTools.length) {
+            toolSchemaList.innerHTML = '<div class="text-xs text-slate-400">暂无工具定义</div>';
+            return;
+        }
+        cachedTools.forEach(tool => {
+            const card = document.createElement('div');
+            const params = Array.isArray(tool.parameters) ? tool.parameters : [];
+            card.className = 'rounded-xl border border-slate-200 bg-white p-3 space-y-2';
+            card.innerHTML = `
+                <div>
+                    <p class="text-xs font-semibold text-slate-900 font-mono">${tool.name}</p>
+                    <p class="text-[11px] text-slate-500 mt-1">${tool.description || ''}</p>
+                </div>
+                <div class="space-y-1">
+                    ${params.length ? params.map(p => `
+                        <div class="rounded-md bg-slate-50 border border-slate-200 px-2 py-1 text-[11px]">
+                            <span class="font-mono text-slate-800">${p.name}</span>
+                            <span class="text-slate-400">: ${p.type}</span>
+                            <span class="ml-1 ${p.required ? 'text-red-500' : 'text-slate-400'}">${p.required ? '必填' : '选填'}</span>
+                            <div class="text-slate-500 mt-0.5">${p.description || ''}</div>
+                        </div>
+                    `).join('') : '<div class="text-[11px] text-slate-400">无参数</div>'}
+                </div>
+            `;
+            toolSchemaList.appendChild(card);
+        });
+    }
+
+    async function fetchTools() {
+        try {
+            const res = await apiFetch('/api/tools');
+            renderToolSchemas(res.tools || []);
+        } catch (e) {
+            console.error('加载工具失败', e);
+        }
+    }
+
+    async function executeSelectedTool() {
+        const toolName = toolSelect.value;
+        if (!toolName) {
+            showToast('请选择工具', 'error');
+            return;
+        }
+        let args = {};
+        const raw = toolArgumentsInput.value.trim();
+        if (raw) {
+            try {
+                args = JSON.parse(raw);
+            } catch (e) {
+                showToast('工具参数必须是合法 JSON', 'error');
+                return;
+            }
+        }
+        toolExecuteBtn.disabled = true;
+        toolResultJson.textContent = '工具执行中...';
+        try {
+            const res = await apiFetch('/api/tools/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolName, arguments: args })
+            });
+            toolResultJson.textContent = JSON.stringify(res, null, 2);
+        } catch (e) {
+            console.error('工具执行失败', e);
+        } finally {
+            toolExecuteBtn.disabled = false;
+        }
+    }
+
+    async function runAgentRoute() {
+        const input = agentInput.value.trim();
+        if (!input) {
+            showToast('请先输入 Agent 任务', 'error');
+            return;
+        }
+        agentRunBtn.disabled = true;
+        agentRouteBadge.textContent = '执行中';
+        agentSelectedTool.textContent = '-';
+        agentTraceText.textContent = '-';
+        agentReasonText.textContent = '-';
+        agentExecutionStatus.textContent = '-';
+        agentExecutionMessage.textContent = '-';
+        agentResultJson.textContent = 'Agent 正在执行...';
+        renderAgentPlan([]);
+        renderTraceEvents([]);
+
+        const payload = {
+            input,
+            kbId: agentKbId.value ? Number(agentKbId.value) : null,
+            applicationId: agentApplicationId.value ? Number(agentApplicationId.value) : null
+        };
+
+        try {
+            const res = await apiFetch('/api/agent/route', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            agentRouteBadge.textContent = res.route || 'unknown';
+            agentSelectedTool.textContent = res.selectedTool || 'none';
+            agentReasonText.textContent = `${res.reason || '-'}${res.metadata?.llmRouterUsed ? '（LLM Router）' : '（Rule Router）'}`;
+            agentExecutionStatus.textContent = `${res.execution?.success ? 'success' : 'failed'} / ${res.metadata?.status || '-'}`;
+            agentExecutionMessage.textContent = `${res.execution?.message || '-'} / taskId=${res.metadata?.taskId || '-'}`;
+            renderAgentPlan(res.plan || []);
+            const trace = res.metadata?.trace;
+            if (trace) {
+                agentTraceText.textContent = `${trace.durationMs} ms / success=${trace.success}`;
+                renderTraceEvents(trace.events || []);
+            } else {
+                renderTraceEvents([]);
+            }
+            agentResultJson.textContent = JSON.stringify(res, null, 2);
+            if (res.metadata?.availableTools) {
+                renderToolSchemas(res.metadata.availableTools);
+            }
+        } catch (e) {
+            console.error('Agent 执行失败', e);
+        } finally {
+            agentRunBtn.disabled = false;
+        }
+    }
+
     function openKbTestModal(kb) {
         currentKbForTest = kb;
         kbTestTitle.textContent = kb.name || `知识库 #${kb.id}`;
@@ -913,13 +1377,19 @@
     toggleAiPanelBtn.addEventListener('click', () => {
         aiPanelCollapsed = !aiPanelCollapsed;
         if (aiPanelCollapsed) {
-            aiPanel.style.width = '2.5rem';
-            aiPanel.querySelectorAll(':scope > *:not(:first-child)').forEach(el => el.classList.add('hidden'));
-            toggleAiPanelBtn.innerHTML = '<i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>';
+            aiPanel.style.width = '3.5rem';
+            toggleAiPanelBtn.innerHTML = '<i data-lucide="chevron-left" class="w-4 h-4"></i>';
+            aiPanel.querySelector('.flex.items-center.space-x-2').style.display = 'none';
+            aiPanel.querySelectorAll('#aiChatContainer, .border-t').forEach(el => {
+                if (el) el.classList.add('hidden');
+            });
         } else {
             aiPanel.style.width = '20rem';
-            aiPanel.querySelectorAll(':scope > *:not(:first-child)').forEach(el => el.classList.remove('hidden'));
-            toggleAiPanelBtn.innerHTML = '<i data-lucide="layout-panel-right" class="w-3.5 h-3.5"></i><span>折叠</span>';
+            toggleAiPanelBtn.innerHTML = '<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i><span>折叠</span>';
+            aiPanel.querySelector('.flex.items-center.space-x-2').style.display = '';
+            aiPanel.querySelectorAll('#aiChatContainer, .border-t').forEach(el => {
+                if (el) el.classList.remove('hidden');
+            });
         }
         lucide.createIcons();
     });
@@ -942,161 +1412,149 @@
                     </div>
                 </div>
                 <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[220px]">
-                    <p class="text-[11px] whitespace-pre-wrap break-words text-slate-100">${text}</p>
+                    <p class="text-[11px] text-slate-100 whitespace-pre-wrap break-words">${text}</p>
                 </div>
             `;
         }
-
         aiChatContainer.appendChild(wrapper);
         aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
         lucide.createIcons();
     }
 
-    function typewriterFill(element, text, speed = 18) {
-        return new Promise(resolve => {
-            element.value = '';
-            let i = 0;
-            const id = setInterval(() => {
-                element.value = text.slice(0, i);
-                i++;
-                if (i > text.length) {
-                    clearInterval(id);
-                    resolve();
+    function openCreateKbModal() {
+        createKbModal.classList.remove('hidden');
+        createKbModal.classList.add('flex');
+    }
+
+    function closeCreateKbModal() {
+        createKbModal.classList.add('hidden');
+        createKbModal.classList.remove('flex');
+        createKbForm.reset();
+    }
+
+    function bindEvents() {
+        if (aiSendBtn) {
+            aiSendBtn.addEventListener('click', async () => {
+                const text = aiInput.value.trim();
+                if (!text) return;
+                aiInput.value = '';
+                appendChatBubble('user', text);
+                aiSendBtn.disabled = true;
+                try {
+                    const res = await apiFetch(aiApiBase, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: text })
+                    });
+                    const data = res?.data;
+                    const content = data ? `我建议为你创建一个「${data.name}」，使用模型 ${data.model}，并为其注入合适的领域 Prompt。` : '抱歉，我暂时无法理解你的需求。请尝试更具体地描述你想要的飞书机器人功能。';
+                    appendChatBubble('ai', content);
+                    lastAiIntentText = text;
+                } catch (e) {
+                    console.error('AI 意图分析失败', e);
+                    appendChatBubble('ai', '抱歉，服务暂时不可用，请稍后再试。');
+                } finally {
+                    aiSendBtn.disabled = false;
                 }
-            }, speed);
-        });
-    }
-
-    function showEnergyOverlay() {
-        let overlay = document.getElementById('energyOverlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'energyOverlay';
-            overlay.className = 'fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70';
-            overlay.innerHTML = `
-                <div class="relative w-40 h-40 rounded-full bg-gradient-to-br from-emerald-500/20 via-blue-500/10 to-slate-900/60 flex items-center justify-center overflow-hidden">
-                    <div class="absolute inset-6 rounded-full border border-emerald-400/40 animate-ping"></div>
-                    <div class="absolute inset-10 rounded-full border border-blue-400/30 animate-[ping_1.8s_linear_infinite]"></div>
-                    <div class="relative z-10 flex flex-col items-center space-y-1">
-                        <div class="w-9 h-9 rounded-full bg-slate-950/80 flex items-center justify-center shadow-lg shadow-emerald-500/40">
-                            <i data-lucide="bot" class="w-5 h-5 text-emerald-300"></i>
-                        </div>
-                        <p class="text-xs text-slate-100">AI 正在汇聚配置</p>
-                        <p class="text-[10px] text-slate-400">为你的智能体填充大脑...</p>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-            lucide.createIcons();
-        }
-        overlay.classList.remove('hidden');
-    }
-
-    function hideEnergyOverlay() {
-        const overlay = document.getElementById('energyOverlay');
-        if (overlay) {
-            overlay.classList.add('hidden');
-        }
-    }
-
-    async function handleAiSend() {
-        const text = aiInput.value.trim();
-        if (!text) return;
-
-        appendChatBubble('user', text);
-        aiInput.value = '';
-        aiSendBtn.disabled = true;
-        lastAiIntentText = text;
-
-        const loading = document.createElement('div');
-        loading.className = 'flex items-start space-x-2 mt-1';
-        loading.innerHTML = `
-            <div class="mt-0.5">
-                <div class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center">
-                    <i data-lucide="bot" class="w-3.5 h-3.5 text-slate-200"></i>
-                </div>
-            </div>
-            <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[220px]">
-                <div class="flex items-center space-x-1 text-[11px] text-slate-300">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>正在理解你的需求...</span>
-                </div>
-            </div>
-        `;
-        aiChatContainer.appendChild(loading);
-        aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
-        lucide.createIcons();
-
-        showEnergyOverlay();
-
-        try {
-            const json = await apiFetch(aiApiBase, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
             });
+        }
 
-            const data = json.data || {};
-            const name = data.name || '未命名智能体';
-            const model = data.model || 'DeepSeek-V3';
+        if (aiInput) {
+            aiInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    aiSendBtn.click();
+                }
+            });
+        }
 
-            loading.remove();
+        if (openCreateKbBtn) {
+            openCreateKbBtn.addEventListener('click', openCreateKbModal);
+        }
 
-            appendChatBubble(
-                'assistant',
-                `我建议为你创建一个「${name}」，使用模型 ${model}，并为其注入合适的领域 Prompt。接下来我会为你自动填好表单，你可以再微调后点击创建。`
-            );
+        if (kbEmptyCreateBtn) {
+            kbEmptyCreateBtn.addEventListener('click', openCreateKbModal);
+        }
 
-            openModal();
+        if (closeKbModalBtn) {
+            closeKbModalBtn.addEventListener('click', closeCreateKbModal);
+        }
 
-            const nameInput = document.getElementById('nameInput');
-            const descInput = document.getElementById('descriptionInput');
-            const iconInput = document.getElementById('iconInput');
-            const modelInput = document.getElementById('modelInput');
-            const promptInput = document.getElementById('promptTemplateInput');
-            const statusInput = document.getElementById('statusInput');
+        if (cancelKbBtn) {
+            cancelKbBtn.addEventListener('click', closeCreateKbModal);
+        }
 
-            statusInput.checked = true;
+        if (createKbModal) {
+            createKbModal.addEventListener('click', (e) => {
+                if (e.target === createKbModal) {
+                    closeCreateKbModal();
+                }
+            });
+        }
 
-            await typewriterFill(nameInput, data.name || '', 22);
-            await typewriterFill(descInput, data.description || '', 8);
-            if (data.icon) {
-                iconInput.value = data.icon;
-            }
-            if (data.model) {
-                modelInput.value = data.model;
-            }
-            if (data.prompt) {
-                await typewriterFill(promptInput, data.prompt, 8);
-            }
+        if (agentRunBtn) {
+            agentRunBtn.addEventListener('click', runAgentRoute);
+        }
 
-            hideEnergyOverlay();
-        } catch (err) {
-            console.error(err);
-            hideEnergyOverlay();
-            appendChatBubble('assistant', '抱歉，解析意图时出现了问题，请稍后重试或改写你的描述。');
-        } finally {
-            aiSendBtn.disabled = false;
+        if (refreshToolsBtn) {
+            refreshToolsBtn.addEventListener('click', fetchTools);
+        }
+
+        if (toolSelect) {
+            toolSelect.addEventListener('change', () => {
+                renderSelectedToolDetail(toolSelect.value);
+                fillToolArgumentTemplate();
+            });
+        }
+
+        if (toolFillTemplateBtn) {
+            toolFillTemplateBtn.addEventListener('click', fillToolArgumentTemplate);
+        }
+
+        if (toolExecuteBtn) {
+            toolExecuteBtn.addEventListener('click', executeSelectedTool);
+        }
+
+        if (createKbForm) {
+            createKbForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = createKbForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+
+                const payload = {
+                    name: document.getElementById('kbNameInput').value.trim(),
+                    description: document.getElementById('kbDescriptionInput').value.trim(),
+                    type: document.getElementById('kbTypeInput').value,
+                    permission: document.getElementById('kbPermissionInput').value
+                };
+
+                try {
+                    const created = await apiFetch(kbApiBase + '/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    await fetchKnowledgeBases();
+                    closeCreateKbModal();
+                    showToast('知识库创建成功', 'success');
+                } catch (err) {
+                    console.error('创建知识库失败', err);
+                    showToast('创建知识库失败', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
         }
     }
 
-    aiSendBtn.addEventListener('click', handleAiSend);
-    aiInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleAiSend();
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', async () => {
+    function init() {
         lucide.createIcons();
-        switchView('apps');
-        try {
-            await Promise.all([fetchApplications(), fetchKnowledgeBases()]);
-        } catch (e) {
-            // 错误已经统一提示
-        }
-    });
+        bindEvents();
+        fetchApplications();
+        fetchKnowledgeBases();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
