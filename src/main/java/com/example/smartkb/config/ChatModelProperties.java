@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class ChatModelProperties {
 
     private String apiKey = "";
-    private String baseUrl = "https://api.jiekou.ai/openai";
-    private String modelName = "gpt-4o-mini";
+    private String baseUrl = "https://open.bigmodel.cn/api/paas/v4";
+    private String modelName = "glm-4.7";
     private double temperature = 0.2;
 
     public String getApiKey() {

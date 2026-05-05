@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 public class EmbeddingProperties {
 
     private String apiKey = "";
-    private String baseUrl = "https://api.deepseek.com";
+    private String baseUrl = "https://open.bigmodel.cn/api/paas/v4";
+    private String modelName = "Embedding-3";
     private int dimensions = 1024;
 
     public String getApiKey() {
@@ -27,6 +28,14 @@ public class EmbeddingProperties {
         this.baseUrl = baseUrl;
     }
 
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
     public int getDimensions() {
         return dimensions;
     }
@@ -40,6 +49,7 @@ public class EmbeddingProperties {
         return "EmbeddingProperties{" +
                 "apiKey='****'" +
                 ", baseUrl='" + baseUrl + '\'' +
+                ", modelName='" + modelName + '\'' +
                 ", dimensions=" + dimensions +
                 '}';
     }

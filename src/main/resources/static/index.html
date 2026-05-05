@@ -6,78 +6,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-color: #2D5CF6;
+            --primary-soft: #EEF3FF;
+            --sidebar-bg: #F7F8FA;
+            --border-color: #E5E6EB;
+            --text-main: #1D2129;
+            --text-secondary: #4E5969;
+            --text-tertiary: #86909C;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+            letter-spacing: 0.01em;
+        }
+        .console-sidebar {
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+        }
+        .console-nav-item {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 38px;
+            padding: 0 12px 0 18px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            transition: all .16s ease;
+        }
+        .console-nav-item:hover {
+            background: #FFFFFF;
+            color: var(--primary-color);
+        }
+        .console-nav-item.active {
+            background: var(--primary-soft);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .console-nav-item.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            border-radius: 999px;
+            background: var(--primary-color);
+        }
+        .console-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.015);
+            transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+        }
+        .console-card:hover {
+            border-color: #C9CDD4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.035);
+        }
+        .console-primary-btn {
+            border-radius: 6px;
+            background: var(--primary-color);
+            color: #FFFFFF;
+            font-weight: 600;
+            box-shadow: none;
+        }
+        .console-primary-btn:hover {
+            background: #1F4EEA;
+        }
+        .console-badge {
+            border-radius: 4px;
+            background: var(--primary-soft);
+            color: var(--primary-color);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+        }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-900">
-<div class="min-h-screen flex flex-col">
-    <!-- 顶部导航 -->
-    <header class="bg-slate-900 text-white shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-            <div class="flex items-center space-x-2">
-                <div class="w-7 h-7 rounded-lg bg-blue-500 flex items-center justify-center">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
-                </div>
-                <span class="font-semibold tracking-tight">SmartKB</span>
-                <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-slate-800/60 text-slate-300">Admin</span>
+<body class="bg-white text-slate-900">
+<div class="min-h-screen flex bg-white">
+    <!-- 侧边栏 -->
+    <aside class="console-sidebar w-[188px] shrink-0 min-h-screen px-3 py-4 hidden md:flex md:flex-col">
+        <div class="flex items-center gap-2 px-2 h-9 mb-7">
+            <div class="w-7 h-7 rounded-md bg-slate-950 text-white flex items-center justify-center">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
             </div>
-            <nav class="flex items-center space-x-6 text-sm">
-                <button id="navApps"
-                        class="flex items-center space-x-1 text-blue-400 font-medium border-b border-blue-400 pb-0.5">
-                    <i data-lucide="bot" class="w-4 h-4"></i>
-                    <span>应用</span>
-                </button>
-                <button id="navKnowledge"
-                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
-                    <i data-lucide="database" class="w-4 h-4"></i>
-                    <span>知识库</span>
-                </button>
-                <button id="navModels"
-                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
-                    <i data-lucide="cpu" class="w-4 h-4"></i>
-                    <span>模型</span>
-                </button>
-                <button id="navAgent"
-                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
-                    <i data-lucide="workflow" class="w-4 h-4"></i>
-                    <span>Agent</span>
-                </button>
-                <button id="navTools"
-                        class="flex items-center space-x-1 text-slate-300 hover:text-white/90 hover:border-b hover:border-slate-500 pb-0.5 transition">
-                    <i data-lucide="wrench" class="w-4 h-4"></i>
-                    <span>工具</span>
-                </button>
-            </nav>
+            <div class="leading-tight">
+                <div class="text-sm font-bold text-slate-950">SmartKB</div>
+                <div class="text-[10px] text-slate-400">AI Console</div>
+            </div>
         </div>
-    </header>
+        <div class="text-[11px] text-slate-400 px-3 mb-2">API 平台</div>
+        <nav class="space-y-1">
+            <button id="navApps" class="console-nav-item active">
+                <i data-lucide="bot" class="w-4 h-4"></i>
+                <span>应用</span>
+            </button>
+            <button id="navKnowledge" class="console-nav-item">
+                <i data-lucide="database" class="w-4 h-4"></i>
+                <span>知识库</span>
+            </button>
+            <button id="navModels" class="console-nav-item">
+                <i data-lucide="cpu" class="w-4 h-4"></i>
+                <span>模型</span>
+            </button>
+        </nav>
+        <div class="text-[11px] text-slate-400 px-3 mt-6 mb-2">智能体</div>
+        <nav class="space-y-1">
+            <button id="navAgent" class="console-nav-item">
+                <i data-lucide="workflow" class="w-4 h-4"></i>
+                <span>Agent 执行台</span>
+            </button>
+            <button id="navTools" class="console-nav-item">
+                <i data-lucide="wrench" class="w-4 h-4"></i>
+                <span>工具调试台</span>
+            </button>
+        </nav>
+        <div class="mt-auto border-t border-slate-200 pt-4 px-3 text-[11px] text-slate-400">
+            <div class="flex items-center gap-2 text-slate-600">
+                <i data-lucide="circle-help" class="w-4 h-4"></i>
+                <span>帮助中心</span>
+            </div>
+        </div>
+    </aside>
 
     <!-- 主体 -->
-    <main class="flex-1">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full">
+    <main class="flex-1 min-w-0 bg-white">
+        <div class="px-5 lg:px-8 py-5 h-full">
             <div class="flex gap-4 h-full">
                 <!-- 左侧 主视图区：SPA 多视图 -->
                 <div class="flex-1 flex flex-col space-y-4">
                     <!-- 顶部面包屑 + 操作栏，随视图切换 -->
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-start justify-between pb-2 border-b border-slate-100">
                         <div>
-                            <div class="flex items-center text-xs text-slate-500 space-x-1">
-                                <span>首页</span>
+                            <div class="flex items-center text-xs text-slate-400 space-x-1">
+                                <span>控制台</span>
                                 <span>/</span>
-                                <span id="breadcrumbLabel" class="text-slate-700">应用中心</span>
+                                <span id="breadcrumbLabel" class="text-slate-500">应用中心</span>
                             </div>
-                            <h1 id="mainTitle" class="mt-1 text-xl font-semibold text-slate-900">
+                            <h1 id="mainTitle" class="mt-2 text-[26px] font-semibold text-[var(--text-main)] tracking-tight">
                                 应用中心
                             </h1>
-                            <p id="mainSubtitle" class="text-xs text-slate-500 mt-1">
+                            <p id="mainSubtitle" class="text-sm text-[var(--text-tertiary)] mt-1">
                                 管理你的智能体应用，配置飞书接入和知识库。
                             </p>
                         </div>
                         <div class="flex items-center space-x-2">
                             <button id="openCreateKbBtn"
-                                    class="hidden inline-flex items-center space-x-2 rounded-md bg-emerald-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 transition">
+                                    class="hidden inline-flex items-center space-x-2 console-primary-btn px-4 py-2 text-sm transition">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                                 <span>创建知识库</span>
                             </button>
                             <button id="openCreateModalBtn"
-                                    class="inline-flex items-center space-x-2 rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-blue-700 transition">
+                                    class="inline-flex items-center space-x-2 console-primary-btn px-4 py-2 text-sm transition">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                                 <span>创建应用</span>
                             </button>
@@ -86,7 +171,7 @@
 
                     <!-- 应用中心视图 -->
                     <section id="appsView"
-                             class="bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col">
+                             class="console-card p-5 flex-1 flex flex-col">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center space-x-2">
                                 <h2 class="text-sm font-semibold text-slate-900">我的应用</h2>
@@ -118,7 +203,7 @@
 
                     <!-- 知识库视图 -->
                     <section id="kbView"
-                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col">
+                             class="hidden console-card p-5 flex-1 flex flex-col">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center space-x-2">
                                 <h2 class="text-sm font-semibold text-slate-900">知识库</h2>
@@ -151,17 +236,17 @@
 
                     <!-- 模型视图（占位） -->
                     <section id="modelsView"
-                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-6 flex-1 flex flex-col items-center justify-center text-center text-xs text-slate-500">
+                             class="hidden console-card p-6 flex-1 flex flex-col items-center justify-center text-center text-xs text-slate-500">
                         <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
                             <i data-lucide="cpu" class="w-5 h-5 text-slate-400"></i>
                         </div>
                         <p class="text-sm font-medium text-slate-800 mb-1">模型配置即将上线</p>
-                        <p>当前版本专注于应用管理与知识库 RAG 流程。稍后你可以在这里切换 DeepSeek / OpenAI / 自建模型。</p>
+                        <p>当前页面暂未展示具体模型列表与切换项。</p>
                     </section>
 
                     <!-- 工具调试视图 -->
                     <section id="toolsView"
-                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col space-y-4">
+                             class="hidden console-card p-5 flex-1 flex flex-col space-y-4">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                             <div class="lg:col-span-1 rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-3">
                                 <div>
@@ -194,7 +279,7 @@
 
                     <!-- Agent 任务执行视图 -->
                     <section id="agentView"
-                             class="hidden bg-white/80 backdrop-blur rounded-xl shadow-sm border border-slate-100 p-4 flex-1 flex flex-col space-y-4">
+                             class="hidden console-card p-5 flex-1 flex flex-col space-y-4">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                             <div class="lg:col-span-1 rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-3">
                                 <div>
@@ -577,7 +662,7 @@
 
 <script>
     const apiBase = '/api/applications';
-    const aiApiBase = '/api/ai/analyze-intent';
+    const agentApiBase = '/api/agent/route';
     const kbApiBase = '/api/knowledge';
 
     let state = {
@@ -690,6 +775,16 @@
         setTimeout(() => toast.remove(), 2600);
     }
 
+    function formatDate(value) {
+        if (!value) return '-';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value).slice(0, 10);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
     async function apiFetch(url, options = {}) {
         try {
             const res = await fetch(url, options);
@@ -713,11 +808,9 @@
     function setActiveNav(target) {
         [navApps, navKnowledge, navModels, navAgent, navTools].forEach(btn => {
             if (!btn) return;
-            btn.classList.remove('text-blue-400', 'border-b', 'border-blue-400');
-            btn.classList.add('text-slate-300');
+            btn.classList.remove('active');
         });
-        target.classList.remove('text-slate-300');
-        target.classList.add('text-blue-400', 'border-b', 'border-blue-400');
+        target.classList.add('active');
     }
 
     function switchView(view) {
@@ -829,69 +922,57 @@
 
             const card = document.createElement('article');
             card.className =
-                'group relative flex flex-col rounded-xl bg-gradient-to-br from-slate-100/60 via-slate-50 to-slate-100/40 p-[1px] shadow-sm hover:shadow-lg hover:from-emerald-500/40 hover:via-blue-500/30 hover:to-slate-900/40 transition ' +
+                'group console-card relative flex flex-col px-4 py-4 ' +
                 (isNew ? 'animate-[fade-in_0.3s_ease-out]' : '');
             card.innerHTML = `
-                <div class="relative flex flex-col rounded-[11px] bg-white/95 px-3 py-3">
-                    <span class="absolute right-2 top-2 inline-flex items-center">
-                        <span class="flex h-2.5 w-2.5">
-                          <span class="${enabled ? 'bg-emerald-400' : 'bg-slate-300'} relative inline-flex h-2.5 w-2.5 rounded-full"></span>
-                        </span>
-                    </span>
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center space-x-2">
-                            <div class="relative">
-                                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition">
-                                    <i data-lucide="${iconName}" class="w-4 h-4"></i>
-                                </div>
-                                ${enabled ? `
-                                <span class="absolute -bottom-1 -right-1 inline-flex items-center justify-center">
-                                    <span class="animate-pulse inline-flex h-3 w-3 rounded-full bg-emerald-400/80"></span>
-                                </span>` : ''}
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-semibold text-slate-900 line-clamp-1" title="${app.name || ''}">
+                <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <div class="w-9 h-9 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
+                            <i data-lucide="${iconName}" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm font-semibold text-[var(--text-main)] line-clamp-1" title="${app.name || ''}">
                                     ${app.name || '未命名应用'}
                                 </h3>
-                                <p class="mt-0.5 text-[11px] text-slate-500 line-clamp-2" title="${app.description || ''}">
-                                    ${app.description || '暂无描述'}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-end space-y-1">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="peer sr-only" ${enabled ? 'checked' : ''} disabled>
-                                <span class="relative w-7 h-3.5 bg-slate-200 rounded-full transition peer-checked:bg-emerald-500">
-                                    <span class="absolute left-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition peer-checked:translate-x-3.5"></span>
+                                <span class="${enabled ? 'console-badge' : 'text-[10px] rounded px-1.5 py-0.5 bg-slate-100 text-slate-500'}">
+                                    ${enabled ? '已发布' : '未发布'}
                                 </span>
-                            </label>
-                            <span class="text-[10px] rounded-full px-1.5 py-0.5 border border-slate-200 text-slate-500">
-                                ${enabled ? '已发布' : '未发布'}
-                            </span>
+                            </div>
+                            <p class="mt-1 text-[11px] text-[var(--text-tertiary)] font-mono">ID&nbsp;&nbsp;${app.id || '-'}</p>
                         </div>
                     </div>
-                    <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
-                        <div class="flex items-center space-x-1">
-                            <i data-lucide="user" class="w-3.5 h-3.5"></i>
-                            <span>创建人：${createdBy}</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                            <i data-lucide="database" class="w-3.5 h-3.5"></i>
-                            <span class="truncate max-w-[120px]" title="绑定知识库数量">
-                                ${boundCount} 个 KB
-                            </span>
-                        </div>
+                    <span class="inline-flex items-center gap-1 text-[11px] ${enabled ? 'text-emerald-600' : 'text-slate-400'}">
+                        <span class="w-2 h-2 rounded-full ${enabled ? 'bg-emerald-500' : 'bg-slate-300'}"></span>
+                        <span>${enabled ? '运行中' : '未启用'}</span>
+                    </span>
+                </div>
+                <p class="mt-3 min-h-[34px] text-xs text-[var(--text-secondary)] line-clamp-2" title="${app.description || ''}">
+                    ${app.description || '暂无描述'}
+                </p>
+                <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+                    <div>
+                        <div class="text-xs font-semibold text-[var(--text-main)]">${createdBy}</div>
+                        <div class="mt-1 text-[11px] text-[var(--text-tertiary)]">创建人</div>
                     </div>
-                    <div class="mt-2 flex items-center justify-end space-x-2 text-[11px]">
-                        <button class="inline-flex items-center space-x-1 px-2 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50">
-                            <i data-lucide="settings-2" class="w-3 h-3"></i>
-                            <span>配置</span>
-                        </button>
-                        <button class="inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-slate-900 text-slate-50 hover:bg-slate-800">
-                            <i data-lucide="messages-square" class="w-3 h-3"></i>
-                            <span>对话</span>
-                        </button>
+                    <div>
+                        <div class="text-xs font-semibold text-[var(--text-main)]">${boundCount}</div>
+                        <div class="mt-1 text-[11px] text-[var(--text-tertiary)]">关联知识库</div>
                     </div>
+                    <div>
+                        <div class="text-xs font-semibold text-[var(--text-main)]">${enabled ? '已发布' : '草稿'}</div>
+                        <div class="mt-1 text-[11px] text-[var(--text-tertiary)]">状态</div>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center justify-end space-x-2 pt-3 border-t border-slate-100 text-[11px]">
+                    <button class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded border border-slate-200 text-[var(--text-secondary)] hover:bg-slate-50">
+                        <i data-lucide="settings-2" class="w-3 h-3"></i>
+                        <span>配置</span>
+                    </button>
+                    <button class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded bg-[var(--primary-color)] text-white hover:bg-[#1F4EEA]">
+                        <i data-lucide="messages-square" class="w-3 h-3"></i>
+                        <span>对话</span>
+                    </button>
                 </div>
             `;
             applicationsGrid.appendChild(card);
@@ -960,44 +1041,57 @@
             const typeLabel = kb.type === 'WEB' ? 'WEB 采集' : '文档库';
             const permission = kb.permission === 'admin' ? '仅管理员' : '普通成员';
             card.className =
-                'group flex flex-col rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm hover:shadow-md hover:border-emerald-300 transition';
+                'group console-card flex flex-col px-4 py-4 transition';
             card.innerHTML = `
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-2">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
+                <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-start space-x-3 min-w-0">
+                        <div class="w-8 h-8 rounded-md bg-[var(--primary-soft)] text-[var(--primary-color)] flex items-center justify-center transition">
                             <i data-lucide="database" class="w-4 h-4"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm font-semibold text-slate-900 line-clamp-1" title="${kb.name || ''}">
-                                ${kb.name || '未命名知识库'}
-                            </h3>
-                            <p class="mt-0.5 text-[11px] text-slate-500 line-clamp-2" title="${kb.description || ''}">
-                                ${kb.description || '暂无描述'}
-                            </p>
-                            <div class="mt-1 flex items-center space-x-2 text-[10px] text-slate-500">
-                                <span class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">${typeLabel}</span>
-                                <span class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">权限：${permission}</span>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm font-semibold text-[var(--text-main)] line-clamp-1" title="${kb.name || ''}">
+                                    ${kb.name || '未命名知识库'}
+                                </h3>
+                                <span class="console-badge">${typeLabel}</span>
                             </div>
+                            <p class="mt-1 text-[11px] text-[var(--text-tertiary)] font-mono">
+                                ID&nbsp;&nbsp;${kb.id || '-'}
+                            </p>
                         </div>
                     </div>
-                    <button data-kb-id="${kb.id}" class="kb-upload-btn inline-flex items-center space-x-1 rounded-md border border-slate-200 px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-50">
+                    <button data-kb-id="${kb.id}" class="kb-upload-btn inline-flex items-center space-x-1 rounded border border-slate-200 px-2.5 py-1.5 text-[11px] text-[var(--text-secondary)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition">
                         <i data-lucide="upload-cloud" class="w-3 h-3"></i>
                         <span>上传</span>
                     </button>
                 </div>
-                <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
-                    <span class="flex items-center space-x-1">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                        <span>最近向量化状态请在文档列表中查看</span>
-                    </span>
+                <p class="mt-3 min-h-[34px] text-xs text-[var(--text-secondary)] line-clamp-2" title="${kb.description || ''}">
+                    ${kb.description || '暂无描述'}
+                </p>
+                <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+                    <div>
+                        <div class="text-xs font-semibold text-[var(--text-main)]">${kb.updatedAt ? formatDate(kb.updatedAt) : '-'}</div>
+                        <div class="mt-1 text-[11px] text-[var(--text-tertiary)]">更新时间</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-[var(--text-main)]">${kb.documentCount ?? '-'}</div>
+                        <div class="mt-1 text-[11px] text-[var(--text-tertiary)]">文件数量</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-[var(--text-main)]">${kb.segmentCount ?? '-'}</div>
+                        <div class="mt-1 text-[11px] text-[var(--text-tertiary)]">切片数量</div>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100 text-[11px]">
+                    <span class="text-[var(--text-tertiary)]">权限：${permission}</span>
                     <div class="flex items-center space-x-2">
-                        <button data-kb-id="${kb.id}" class="kb-docs-btn inline-flex items-center space-x-1 px-2 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50">
+                        <button data-kb-id="${kb.id}" class="kb-docs-btn inline-flex items-center space-x-1 px-2.5 py-1.5 rounded border border-slate-200 text-[var(--text-secondary)] hover:bg-slate-50">
                             <i data-lucide="files" class="w-3 h-3"></i>
                             <span>文档</span>
                         </button>
-                        <button data-kb-id="${kb.id}" data-kb-name="${kb.name}" class="kb-test-btn inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-slate-900 text-white hover:bg-slate-800">
+                        <button data-kb-id="${kb.id}" data-kb-name="${kb.name}" class="kb-test-btn inline-flex items-center space-x-1 px-2.5 py-1.5 rounded bg-[var(--primary-color)] text-white hover:bg-[#1F4EEA]">
                             <i data-lucide="radar" class="w-3 h-3"></i>
-                            <span>命中率测试</span>
+                            <span>测试</span>
                         </button>
                     </div>
                 </div>
@@ -1400,7 +1494,7 @@
 
         if (role === 'user') {
             wrapper.innerHTML = `
-                <div class="bg-emerald-500 text-slate-950 px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[220px]">
+                <div class="bg-emerald-500 text-slate-950 px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[320px]">
                     <p class="text-[11px] whitespace-pre-wrap break-words">${text}</p>
                 </div>
             `;
@@ -1411,7 +1505,7 @@
                         <i data-lucide="bot" class="w-3.5 h-3.5 text-slate-200"></i>
                     </div>
                 </div>
-                <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[220px]">
+                <div class="bg-slate-900/80 border border-slate-700/70 px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[360px]">
                     <p class="text-[11px] text-slate-100 whitespace-pre-wrap break-words">${text}</p>
                 </div>
             `;
@@ -1419,6 +1513,39 @@
         aiChatContainer.appendChild(wrapper);
         aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
         lucide.createIcons();
+    }
+
+    function formatAgentReply(res) {
+        if (!res) {
+            return '抱歉，当前没有拿到 Agent 返回结果。';
+        }
+
+        const executionData = res.execution?.data || {};
+        if (typeof executionData.answer === 'string' && executionData.answer.trim()) {
+            const citations = Array.isArray(executionData.citations) && executionData.citations.length
+                ? `\n\n引用来源：\n- ${executionData.citations.join('\n- ')}`
+                : '';
+            return `${executionData.answer}${citations}`;
+        }
+
+        if (executionData.name || executionData.prompt) {
+            return [
+                '我已经帮你生成了应用草案：',
+                executionData.name ? `名称：${executionData.name}` : null,
+                executionData.model ? `模型：${executionData.model}` : null,
+                executionData.prompt ? `Prompt：${executionData.prompt}` : null
+            ].filter(Boolean).join('\n');
+        }
+
+        if (res.execution?.message) {
+            return [
+                `任务类型：${res.route || '-'}`,
+                `工具：${res.selectedTool || '-'}`,
+                `结果：${res.execution.message}`
+            ].join('\n');
+        }
+
+        return 'Agent 已执行，但暂时没有可展示的文本结果。';
     }
 
     function openCreateKbModal() {
@@ -1441,18 +1568,21 @@
                 appendChatBubble('user', text);
                 aiSendBtn.disabled = true;
                 try {
-                    const res = await apiFetch(aiApiBase, {
+                    const payload = {
+                        input: text,
+                        kbId: agentKbId?.value ? Number(agentKbId.value) : null,
+                        applicationId: agentApplicationId?.value ? Number(agentApplicationId.value) : null
+                    };
+                    const res = await apiFetch(agentApiBase, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text: text })
+                        body: JSON.stringify(payload)
                     });
-                    const data = res?.data;
-                    const content = data ? `我建议为你创建一个「${data.name}」，使用模型 ${data.model}，并为其注入合适的领域 Prompt。` : '抱歉，我暂时无法理解你的需求。请尝试更具体地描述你想要的飞书机器人功能。';
-                    appendChatBubble('ai', content);
+                    appendChatBubble('ai', formatAgentReply(res));
                     lastAiIntentText = text;
                 } catch (e) {
-                    console.error('AI 意图分析失败', e);
-                    appendChatBubble('ai', '抱歉，服务暂时不可用，请稍后再试。');
+                    console.error('Agent 聊天执行失败', e);
+                    appendChatBubble('ai', '抱歉，Agent 服务暂时不可用，请稍后再试。');
                 } finally {
                     aiSendBtn.disabled = false;
                 }

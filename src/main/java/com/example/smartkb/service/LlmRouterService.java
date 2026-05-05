@@ -45,12 +45,13 @@ public class LlmRouterService {
                     - knowledge_qa
                     - app_builder
                     - knowledge_ops
+                    - general_chat
                     - fallback
 
                     用户输入：%s
 
                     请只返回一行，格式：route=<route>;tool=<tool>;reason=<一句话>
-                    tool 只允许：knowledge.answer, application.draft, knowledge.ops.guide, none
+                    tool 只允许：knowledge.answer, application.draft, knowledge.ops.guide, general.chat, none
                     """.formatted(input));
             return parse(result);
         } catch (Exception e) {

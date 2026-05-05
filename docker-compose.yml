@@ -1,13 +1,34 @@
 services:
   db:
-    image: pgvector/pgvector:pg16 # 专门集成了 vector 扩展的镜像
+    image: pgvector/pgvector:pg16
     container_name: smartkb-db
     restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=12345zxcvb
-      - POSTGRES_DB=smart_db # 这里填你项目需要的数据库名
+      - POSTGRES_DB=smart_db
     ports:
       - "5432:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: smart-kb
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      - JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/smart_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=12345zxcvb
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
+      - EMBEDDING_BASE_URL=${EMBEDDING_BASE_URL:-https://api.jiekou.ai/openai}
+      - CHAT_API_KEY=${CHAT_API_KEY:-${EMBEDDING_API_KEY:-}}
+      - CHAT_BASE_URL=${CHAT_BASE_URL:-https://api.jiekou.ai/openai}
+      - CHAT_MODEL_NAME=${CHAT_MODEL_NAME:-gpt-4o-mini}
+    ports:
+      - "8082:8082"

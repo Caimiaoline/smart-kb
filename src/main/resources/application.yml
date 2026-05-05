@@ -18,14 +18,15 @@ spring:
 embedding:
   model:
     api-key: ${EMBEDDING_API_KEY:}
-    base-url: ${EMBEDDING_BASE_URL:https://api.jiekou.ai/openai}
+    base-url: ${EMBEDDING_BASE_URL:https://open.bigmodel.cn/api/paas/v4}
+    model-name: ${EMBEDDING_MODEL_NAME:Embedding-3}
     dimensions: ${EMBEDDING_DIMENSIONS:1024}
 
 # RAG 最终回答生成模型，兼容 OpenAI 风格接口
 chat:
   model:
     api-key: ${CHAT_API_KEY:${EMBEDDING_API_KEY:}}
-    base-url: ${CHAT_BASE_URL:https://api.jiekou.ai/openai}
-    model-name: ${CHAT_MODEL_NAME:gpt-4o-mini}
+    base-url: ${CHAT_BASE_URL:https://open.bigmodel.cn/api/paas/v4}
+    model-name: ${CHAT_MODEL_NAME:glm-4.7}
     temperature: ${CHAT_TEMPERATURE:0.2}
     dimensions: 1024

@@ -23,6 +23,7 @@ public class EmbeddingManager {
 
     private final EmbeddingProperties embeddingProperties;
     private EmbeddingModel embeddingModel;
+    private boolean embeddingAvailable;
 
     public EmbeddingManager(EmbeddingProperties embeddingProperties) {
         this.embeddingProperties = embeddingProperties;
@@ -31,12 +32,16 @@ public class EmbeddingManager {
     @PostConstruct
     public void init() {
         if (embeddingProperties.getApiKey() == null || embeddingProperties.getApiKey().isBlank()) {
-            log.warn("embedding.model.api-key not set, embedding will fail at runtime");
+            log.warn("embedding.model.api-key not set, embedding will be disabled and fallback vectors will be used");
+            this.embeddingAvailable = false;
+            return;
         }
         this.embeddingModel = OpenAiEmbeddingModel.builder()
                 .apiKey(embeddingProperties.getApiKey())
                 .baseUrl(embeddingProperties.getBaseUrl())
+                .modelName(embeddingProperties.getModelName())
                 .build();
+        this.embeddingAvailable = true;
     }
 
     /**
@@ -45,6 +50,9 @@ public class EmbeddingManager {
     public float[] embed(String text) {
         if (text == null || text.isBlank()) {
             throw new IllegalArgumentException("text cannot be blank");
+        }
+        if (!embeddingAvailable || embeddingModel == null) {
+            return fallbackVector(text);
         }
         Embedding embedding = embeddingModel.embed(TextSegment.from(text)).content();
         float[] v = embedding.vector();
@@ -58,11 +66,28 @@ public class EmbeddingManager {
         if (texts == null || texts.isEmpty()) {
             return List.of();
         }
+        if (!embeddingAvailable || embeddingModel == null) {
+            return texts.stream().map(this::fallbackVector).toList();
+        }
         List<TextSegment> segments = texts.stream().map(TextSegment::from).collect(Collectors.toList());
         List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
         return embeddings.stream()
                 .map(e -> e.vector() != null ? e.vector() : new float[0])
                 .collect(Collectors.toList());
+    }
+
+    private float[] fallbackVector(String text) {
+        int dim = Math.max(8, dimensions());
+        float[] vector = new float[dim];
+        if (text == null || text.isBlank()) {
+            return vector;
+        }
+        int limit = Math.min(text.length(), 256);
+        for (int i = 0; i < limit; i++) {
+            int index = Math.abs((text.charAt(i) + i * 31) % dim);
+            vector[index] += 1.0f;
+        }
+        return vector;
     }
 
     public int dimensions() {

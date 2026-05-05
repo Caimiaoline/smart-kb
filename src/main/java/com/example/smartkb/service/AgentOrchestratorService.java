@@ -153,11 +153,11 @@ public class AgentOrchestratorService {
         }
 
         return new AgentPlan(
-                "fallback",
-                "当前输入未命中明确路由规则，返回引导信息",
-                List.of("尝试识别任务类型", "未命中明确规则", "返回引导提示"),
-                null,
-                Map.of(),
+                "general_chat",
+                "当前输入未命中专业任务路由，选择通用对话工具",
+                List.of("识别为通用对话", "选择 general.chat 工具", "生成自然语言回复"),
+                "general.chat",
+                Map.of("message", input),
                 false
         );
     }
@@ -174,7 +174,8 @@ public class AgentOrchestratorService {
             ), true);
             case "application.draft" -> new AgentPlan(decision.route(), decision.reason(), decision.suggestedSteps(), "application.draft", Map.of("text", input), true);
             case "knowledge.ops.guide" -> new AgentPlan(decision.route(), decision.reason(), decision.suggestedSteps(), "knowledge.ops.guide", Map.of("input", input), true);
-            default -> new AgentPlan("fallback", decision.reason(), decision.suggestedSteps(), null, Map.of(), true);
+            case "general.chat" -> new AgentPlan(decision.route(), decision.reason(), decision.suggestedSteps(), "general.chat", Map.of("message", input), true);
+            default -> new AgentPlan("general_chat", decision.reason(), decision.suggestedSteps(), "general.chat", Map.of("message", input), true);
         };
     }
 

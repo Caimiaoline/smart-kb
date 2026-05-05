@@ -39,6 +39,17 @@ postgres_data/
 ### Local notes ###
 面试说明书.md
 
+### Frontend ###
+frontend/node_modules/
+frontend/dist/
+
+### Java / build artifacts ###
+*.log
+*.tmp
+
 ### Secrets / local config ###
 .env
+.env.*
+!.env.example
 application-local.yml
+start-local.cmd
