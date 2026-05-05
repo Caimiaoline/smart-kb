@@ -1,158 +1,290 @@
-# SmartKB
+# SmartKB 智能知识库系统
 
-SmartKB is a Spring Boot based enterprise knowledge-base and AI agent workspace prototype. It combines document ingestion, vector retrieval, RAG answer generation, agent orchestration, tool execution, MCP-style tool bridging, trace events, and basic runtime metrics.
+## 一、项目背景
 
-## Features
+SmartKB 是一个面向企业知识管理与智能问答场景的项目原型，目标是把分散的文档、知识说明和业务资料统一沉淀到一个可检索、可问答、可扩展的系统中。
 
-- Knowledge-base management with document upload and parsing
-- Apache Tika based text extraction
-- Semantic chunking and embedding storage
-- PostgreSQL + pgvector vector retrieval
-- Query rewrite, hybrid recall, lightweight rerank, and citation
-- RAG answer generation with extractive fallback
-- Agent orchestration with LLM Router + rule fallback
-- Tool registry, tool schema, argument validation, and execution result protocol
-- MCP-style tool descriptor and bridge endpoints
-- Agent trace events, task status, and basic metrics
-- Static web console for app, knowledge base, Agent, and tool debugging
+在传统知识库场景中，常见问题包括：
 
-## Tech Stack
+- 文档分散在多个位置，信息难以统一管理
+- 关键词检索效率有限，难以直接得到完整答案
+- 知识更新后，人工维护问答成本较高
+- 不同业务场景下，缺少统一的智能问答入口
+
+为了解决这些问题，SmartKB 结合大模型能力、向量检索和知识库管理能力，提供从文档接入、知识检索到智能回答的一体化方案。
+
+## 二、项目定位
+
+SmartKB 的核心定位是一个“企业知识库 + AI 问答 + Agent 能力编排”的实验型系统，适合用于以下场景：
+
+- 企业内部知识问答
+- 项目资料归档与检索
+- 制度文档、产品文档、操作手册的统一查询
+- 智能客服或业务助手的底层知识支撑
+- AI 应用原型验证与演示
+
+## 三、主要功能
+
+### 1. 知识库管理
+
+- 创建知识库
+- 查看知识库列表
+- 向指定知识库上传文档
+- 对文档内容进行解析、切分和存储
+- 支持基于知识库进行命中测试与问答验证
+
+### 2. 智能问答
+
+- 根据用户问题自动进行知识检索
+- 结合语义召回能力返回更相关的知识片段
+- 基于检索结果生成回答
+- 在回答过程中保留知识引用能力，提升结果可信度
+
+### 3. Agent 路由与任务编排
+
+- 根据用户输入进行任务路由
+- 支持将问题分发到不同能力模块
+- 支持工具调用与基础执行编排
+- 可作为后续扩展多工具协同的基础框架
+
+### 4. 工具能力管理
+
+- 提供工具列表查看能力
+- 支持工具执行入口
+- 支持与外部工具能力进行桥接
+
+### 5. Web 控制台
+
+项目包含一个前端控制台，用于：
+
+- 查看应用能力
+- 查看知识库相关功能
+- 查看 Agent 能力
+- 查看模型与工具相关页面
+- 进行基础的调试和演示
+
+## 四、技术方案
+
+本项目采用前后端分离的轻量化架构，后端负责知识处理、问答与接口服务，前端负责页面展示与交互。
+
+### 后端技术
 
 - Java 17
-- Spring Boot 3.4
-- Spring Web / Validation / JPA / JDBC
-- PostgreSQL + pgvector
-- LangChain4j OpenAI-compatible models
-- Apache Tika
-- Tailwind CSS CDN + Lucide icons for the static console
+- Spring Boot 3
+- Spring Web
+- Spring Data JPA / JDBC
+- Maven
 
-## Runtime Requirements
+### AI 与知识检索相关技术
 
-- JDK 17+
-- Maven 3.8+
-- PostgreSQL with pgvector extension
-- OpenAI-compatible embedding/chat model endpoint
+- LangChain4j
+- OpenAI 兼容接口模型
+- 向量化 Embedding 模型
+- RAG（检索增强生成）
+- Agent 路由与工具调用机制
 
-## Configuration
+### 文档处理与存储
 
-Main configuration is in `src/main/resources/application.yml`.
+- Apache Tika 文档解析
+- PostgreSQL 数据库
+- pgvector 向量检索扩展
 
-For local startup, configure these environment variables instead of committing secrets:
+### 前端技术
+
+- Vue 3
+- Vite
+- Vue Router
+- Axios
+
+### 容器化部署
+
+- Docker
+- Docker Compose
+
+## 五、系统结构说明
+
+系统整体可以理解为三部分：
+
+1. **前端控制台**  
+   用于页面访问、功能演示和接口联调。
+
+2. **后端服务**  
+   提供知识库管理、问答、Agent 路由、工具调用等接口。
+
+3. **数据库与向量检索服务**  
+   存储业务数据、文档切片信息以及向量数据，用于支持语义检索。
+
+## 六、运行环境要求
+
+在本地启动本项目前，请先准备以下环境：
+
+- JDK 17 或以上
+- Maven 3.8 或以上
+- Node.js 18 或以上
+- npm 9 或以上
+- Docker（可选，推荐）
+- Docker Compose（可选，推荐）
+- PostgreSQL 16 左右版本
+- PostgreSQL 已安装 `pgvector` 扩展
+- 可用的 OpenAI 兼容模型服务地址和密钥
+
+## 七、项目下载方式
+
+### 方式一：通过 Git 克隆
 
 ```bash
-EMBEDDING_API_KEY=your_embedding_api_key
-EMBEDDING_BASE_URL=https://api.example.com/openai
-EMBEDDING_DIMENSIONS=1024
-CHAT_API_KEY=your_chat_api_key
-CHAT_BASE_URL=https://api.example.com/openai
-CHAT_MODEL_NAME=gpt-4o-mini
+git clone git@github.com:Caimiaoline/smart-kb.git
+cd smart-kb
+```
+
+### 方式二：通过 GitHub 页面下载压缩包
+
+1. 打开仓库主页
+2. 点击 `Code`
+3. 选择 `Download ZIP`
+4. 解压后进入项目目录
+
+## 八、环境配置说明
+
+项目运行依赖数据库配置以及模型服务配置，建议优先使用环境变量进行管理，不要把真实密钥直接写入代码仓库。
+
+### 1. 数据库配置
+
+默认数据库相关配置可在后端配置文件中找到，启动前请确保：
+
+- PostgreSQL 已启动
+- 已创建对应数据库
+- 已启用 `pgvector` 扩展
+- 用户名和密码与项目配置保持一致
+
+如果你使用 Docker Compose 启动数据库，则项目会自动创建并连接容器中的数据库服务。
+
+### 2. 模型服务配置
+
+请准备以下信息：
+
+- Embedding 模型服务地址
+- Embedding 模型密钥
+- Chat 模型服务地址
+- Chat 模型密钥
+- Chat 模型名称
+
+建议通过环境变量配置，例如：
+
+```bash
+EMBEDDING_API_KEY=你的向量模型密钥
+EMBEDDING_BASE_URL=你的向量模型服务地址
+EMBEDDING_MODEL_NAME=你的向量模型名称
+EMBEDDING_DIMENSIONS=向量维度
+CHAT_API_KEY=你的对话模型密钥
+CHAT_BASE_URL=你的对话模型服务地址
+CHAT_MODEL_NAME=你的对话模型名称
 CHAT_TEMPERATURE=0.2
 ```
 
-Database defaults in `application.yml`:
+如果本地没有配置这些参数，知识检索和智能问答相关能力可能无法正常工作。
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: 12345zxcvb
-```
+## 九、启动方式
 
-Adjust these values locally as needed.
+项目支持两种常见启动方式：本地开发启动 和 Docker 启动。
 
-## Start
+### 方式一：本地开发启动
+
+#### 第 1 步：启动数据库
+
+你可以使用本地 PostgreSQL，也可以使用 Docker 单独启动数据库。
+
+#### 第 2 步：启动后端服务
+
+在项目根目录执行：
 
 ```bash
 mvn spring-boot:run
 ```
 
-Then open:
+后端默认访问地址：
 
 ```text
 http://localhost:8082
 ```
 
-## Main API Endpoints
+#### 第 3 步：启动前端
 
-### Knowledge Base
+进入前端目录并安装依赖：
 
-- `POST /api/knowledge`
-- `GET /api/knowledge`
-- `POST /api/knowledge/{kbId}/upload`
-- `POST /api/knowledge/{kbId}/hit-test`
-
-### Agent
-
-- `POST /api/agent/route`
-
-Example:
-
-```json
-{
-  "input": "如何上传知识库文档？",
-  "kbId": 1,
-  "applicationId": null
-}
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-### Tools
-
-- `GET /api/tools`
-- `GET /api/tools/mcp`
-- `POST /api/tools/execute`
-
-Example:
-
-```json
-{
-  "toolName": "knowledge.answer",
-  "arguments": {
-    "query": "如何上传知识库文档？",
-    "kbId": 1,
-    "topN": 5,
-    "threshold": 0.35
-  }
-}
-```
-
-### MCP Bridge
-
-- `GET /api/mcp/tools`
-- `POST /api/mcp/invoke`
-
-### Metrics
-
-- `GET /api/metrics/agent`
-
-## Agent Flow
+前端默认访问地址：
 
 ```text
-User input
-→ LLM Router / rule fallback
-→ Agent plan
-→ Tool schema validation
-→ Tool execution
-→ Trace events
-→ Task status
-→ Metrics snapshot
+http://localhost:5173
 ```
 
-For knowledge QA:
+启动完成后，前端会通过代理访问后端接口。
+
+### 方式二：使用 Docker Compose 启动
+
+在项目根目录执行：
+
+```bash
+docker compose up --build
+```
+
+启动后可通过以下地址访问后端：
 
 ```text
-Question
-→ knowledge.answer
-→ query rewrite
-→ vector recall + keyword recall
-→ rerank
-→ citation
-→ answer generation
-→ answer + citations + contexts
+http://localhost:8082
 ```
 
-## Notes
+如果前端需要单独开发调试，仍可在 `frontend` 目录下使用 `npm run dev` 启动。
 
-- `postgres-data/` and `postgres_data/` are local runtime database directories and are ignored by Git.
-- `面试说明书.md` is a local interview note and is ignored by Git.
-- Do not commit API keys or local secrets. Use environment variables instead.
+## 十、使用说明
+
+### 1. 进入系统
+
+- 后端启动后，可直接访问接口
+- 前端启动后，可通过浏览器进入前端控制台
+
+### 2. 创建知识库
+
+进入知识库相关页面后，先创建一个知识库，用于承载后续上传的资料。
+
+### 3. 上传文档
+
+将需要沉淀的文档上传到指定知识库。系统会自动完成文档解析、文本处理和知识入库。
+
+### 4. 发起知识问答
+
+在问答或调试页面输入问题，系统会根据知识库内容进行检索，并输出回答结果。
+
+### 5. 查看工具与 Agent 能力
+
+可以在对应页面查看系统支持的工具能力、Agent 相关功能以及模型配置展示内容，用于调试与演示。
+
+## 十一、适用对象
+
+本项目适合以下类型用户参考或使用：
+
+- 想做智能知识库原型的开发者
+- 想做企业内部问答系统的团队
+- 希望把大模型能力接入业务知识场景的项目人员
+- 需要演示 RAG + Agent 基础能力的学习者或面试展示场景
+
+## 十二、注意事项
+
+- 请不要将真实 API Key、数据库密码等敏感信息提交到仓库
+- `postgres-data/`、`postgres_data/`、`target/`、`frontend/node_modules/` 等目录属于本地运行产物，不建议提交
+- 首次启动前，请确认数据库连接、模型服务地址和密钥配置正确
+- 如果页面可打开但问答不可用，通常优先检查模型服务配置与数据库状态
+
+## 十三、后续可扩展方向
+
+- 增加更完善的知识库权限管理
+- 增加更多文档格式与批量导入能力
+- 增强 Agent 工具编排和多步骤任务能力
+- 对接更多模型服务提供商
+- 增加更完整的运维监控与日志分析能力
